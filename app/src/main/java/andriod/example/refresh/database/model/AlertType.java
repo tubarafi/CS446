@@ -19,8 +19,7 @@ public class AlertType {
     @NonNull
     private int notificationDays;
 
-    public AlertType(long id, String name, int notificationDays) {
-        this.id = id;
+    public AlertType(String name, int notificationDays) {
         this.name = name;
         this.notificationDays = notificationDays;
     }

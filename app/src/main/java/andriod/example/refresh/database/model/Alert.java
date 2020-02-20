@@ -23,8 +23,7 @@ public class Alert {
     @NonNull
     private long alertTypeId;
 
-    public Alert(long id, String name, String expiryDate, long alertTypeId) {
-        this.id = id;
+    public Alert(String name, String expiryDate, long alertTypeId) {
         this.name = name;
         this.expiryDate = expiryDate;
         this.alertTypeId = alertTypeId;
