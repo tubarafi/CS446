@@ -1,4 +1,4 @@
-package andriod.example.refresh.database.model;
+package com.example.refresh.database.model;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;

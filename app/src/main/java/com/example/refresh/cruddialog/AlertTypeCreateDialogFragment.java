@@ -1,11 +1,7 @@
-package andriod.example.refresh.cruddialog;
+package com.example.refresh.cruddialog;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +11,10 @@ import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
 
-import java.lang.ref.WeakReference;
-
-import andriod.example.refresh.R;
-import andriod.example.refresh.database.AppDatabase;
-import andriod.example.refresh.database.model.AlertType;
-import andriod.example.refresh.util.Constants;
+import com.example.refresh.R;
+import com.example.refresh.database.AppDatabase;
+import com.example.refresh.database.model.AlertType;
+import com.example.refresh.util.Constants;
 
 
 public class AlertTypeCreateDialogFragment extends DialogFragment {

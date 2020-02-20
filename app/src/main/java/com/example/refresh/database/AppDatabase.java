@@ -1,4 +1,4 @@
-package andriod.example.refresh.database;
+package com.example.refresh.database;
 
 import android.content.Context;
 
@@ -6,10 +6,10 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import andriod.example.refresh.database.dao.AlertDAO;
-import andriod.example.refresh.database.dao.AlertTypeDAO;
-import andriod.example.refresh.database.model.Alert;
-import andriod.example.refresh.database.model.AlertType;
+import com.example.refresh.database.dao.AlertDAO;
+import com.example.refresh.database.dao.AlertTypeDAO;
+import com.example.refresh.database.model.Alert;
+import com.example.refresh.database.model.AlertType;
 
 @Database(entities = {Alert.class, AlertType.class},version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {

@@ -1,4 +1,4 @@
-package andriod.example.refresh.adapter;
+package com.example.refresh.adapter;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,9 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import andriod.example.refresh.R;
-import andriod.example.refresh.database.AppDatabase;
-import andriod.example.refresh.database.model.AlertType;
+import com.example.refresh.R;
+import com.example.refresh.database.AppDatabase;
+import com.example.refresh.database.model.AlertType;
 
 public class TypeListAdapter extends RecyclerView.Adapter<TypeListAdapter.ListViewHolder> {
 
@@ -47,7 +47,6 @@ public class TypeListAdapter extends RecyclerView.Adapter<TypeListAdapter.ListVi
 
         holder.typeNameTextView.setText(alertType.getName());
         holder.typeDaysTextView.setText(String.valueOf(alertType.getNotificationDays()));
-
         /*
         holder.crossButtonImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,3 +114,4 @@ public class TypeListAdapter extends RecyclerView.Adapter<TypeListAdapter.ListVi
         return alertTypeList.size();
     }
 }
+

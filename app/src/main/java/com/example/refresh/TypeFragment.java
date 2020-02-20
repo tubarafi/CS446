@@ -1,7 +1,5 @@
 package com.example.refresh;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,10 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import andriod.example.refresh.adapter.TypeListAdapter;
-import andriod.example.refresh.cruddialog.AlertTypeCreateDialogFragment;
-import andriod.example.refresh.cruddialog.AlertTypeCreateListener;
-import andriod.example.refresh.database.AppDatabase;
-import andriod.example.refresh.database.model.AlertType;
+import com.example.refresh.cruddialog.AlertTypeCreateDialogFragment;
+import com.example.refresh.cruddialog.AlertTypeCreateListener;
+import com.example.refresh.database.AppDatabase;
+import com.example.refresh.database.model.AlertType;
 
 public class TypeFragment extends Fragment implements AlertTypeCreateListener {
 

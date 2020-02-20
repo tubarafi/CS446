@@ -1,4 +1,4 @@
-package andriod.example.refresh.util;
+package com.example.refresh.util;
 
 public class Constants {
 

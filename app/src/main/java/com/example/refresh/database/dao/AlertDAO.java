@@ -1,4 +1,4 @@
-package andriod.example.refresh.database.dao;
+package com.example.refresh.database.dao;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -8,7 +8,7 @@ import androidx.room.Update;
 
 import java.util.List;
 
-import andriod.example.refresh.database.model.Alert;
+import com.example.refresh.database.model.Alert;
 
 @Dao
 public interface AlertDAO {
