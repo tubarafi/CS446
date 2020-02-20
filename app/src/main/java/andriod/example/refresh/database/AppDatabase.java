@@ -11,7 +11,7 @@ import andriod.example.refresh.database.dao.AlertTypeDAO;
 import andriod.example.refresh.database.model.Alert;
 import andriod.example.refresh.database.model.AlertType;
 
-@Database(entities = {Alert.class, AlertType.class},version = 1)
+@Database(entities = {Alert.class, AlertType.class},version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static  AppDatabase INSTANCE;
 
