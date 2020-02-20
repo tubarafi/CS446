@@ -1,4 +1,4 @@
-package andriod.example.refresh;
+package com.example.refresh;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

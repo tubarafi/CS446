@@ -1,4 +1,4 @@
-package andriod.example.refresh;
+package com.example.refresh;
 
 import android.content.Context;
 import android.content.Intent;
