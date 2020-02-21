@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import com.example.refresh.AddFoodItemActivity;
+import com.example.refresh.HomeFragment;
 import com.example.refresh.R;
 import com.example.refresh.database.AppDatabase;
 import com.example.refresh.database.model.FoodItem;
@@ -28,13 +29,15 @@ public class FoodItemListAdapter extends RecyclerView.Adapter<FoodItemListAdapte
     private Context context;
     private List<FoodItem> foodItemList;
     private LayoutInflater layoutInflater;
+    private HomeFragment homeFragment;
     private AppDatabase db;
 
-    public FoodItemListAdapter(Context context, List<FoodItem> foodItemList) {
+    public FoodItemListAdapter(Context context, List<FoodItem> foodItemList, HomeFragment homeFragment) {
         db = AppDatabase.getAppDatabase(context);
         layoutInflater = LayoutInflater.from(context);
         this.context = context;
         this.foodItemList = foodItemList;
+        this.homeFragment = homeFragment;
     }
 
     @NonNull
@@ -82,7 +85,7 @@ public class FoodItemListAdapter extends RecyclerView.Adapter<FoodItemListAdapte
         holder.editButtonImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((Activity)context).startActivityForResult(new Intent(context, AddFoodItemActivity.class).putExtra("food_item", foodItemList.get(itemPosition)).putExtra("position", itemPosition), 100);
+                homeFragment.startActivityForResult(new Intent(context, AddFoodItemActivity.class).putExtra("food_item", foodItemList.get(itemPosition)).putExtra("position", itemPosition), 100);
             }
         });
 

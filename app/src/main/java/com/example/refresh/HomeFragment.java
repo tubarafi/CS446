@@ -42,7 +42,7 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
         foodItemListEmptyTextView = rootView.findViewById(R.id.emptyListTextView);
         recyclerView = rootView.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
-        foodItemListAdapter = new FoodItemListAdapter(getActivity(), foodItemList);
+        foodItemListAdapter = new FoodItemListAdapter(getActivity(), foodItemList, this);
         recyclerView.setAdapter(foodItemListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         FloatingActionButton fab = rootView.findViewById(R.id.fab);
