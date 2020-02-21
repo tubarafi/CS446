@@ -46,6 +46,9 @@ public class AddFoodItemActivity extends AppCompatActivity {
             remindDateEditText.setText(foodItem.getRemindMeOnDate());
             noteEditText.setText(foodItem.getNote());
         }
+        else{
+            getSupportActionBar().setTitle("Create Food Item");
+        }
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
