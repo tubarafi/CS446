@@ -1,0 +1,133 @@
+package com.example.refresh.adapter;
+
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.refresh.AddShopItemActivity;
+import com.example.refresh.HomeFragment;
+import com.example.refresh.R;
+import com.example.refresh.ShoppingFragment;
+import com.example.refresh.database.AppDatabase;
+import com.example.refresh.database.model.ShopItem;
+
+import java.util.List;
+
+public class ShopItemListAdapter extends RecyclerView.Adapter<ShopItemListAdapter.ListViewHolder> {
+
+    private Context context;
+    private List<ShopItem> shopItemList;
+    private LayoutInflater layoutInflater;
+    private ShoppingFragment shoppingFragment;
+    private AppDatabase db;
+
+    public ShopItemListAdapter(Context context, List<ShopItem> shopItemList, ShoppingFragment shoppingFragment) {
+        db = AppDatabase.getAppDatabase(context);
+        layoutInflater = LayoutInflater.from(context);
+        this.context = context;
+        this.shopItemList = shopItemList;
+        this.shoppingFragment = shoppingFragment;
+    }
+
+    @NonNull
+    @Override
+    public ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = layoutInflater.inflate(R.layout.shop_item, parent, false);
+        return new ListViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ShopItemListAdapter.ListViewHolder holder, int position) {
+        final int itemPosition = position;
+        final ShopItem shopItem = shopItemList.get(position);
+
+        holder.shopNameTextView.setText(shopItem.getName());
+        holder.quantityTextView.setText(String.valueOf(shopItem.getQuantity()));
+
+        holder.crossButtonImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+                alertDialogBuilder.setMessage("Are you sure, You wanted to delete this shop item?");
+                alertDialogBuilder.setPositiveButton("Yes",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
+                                deleteShopItem(itemPosition);
+                            }
+                        });
+
+                alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+            }
+        });
+
+
+        holder.editButtonImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                shoppingFragment.startActivityForResult(new Intent(context, AddShopItemActivity.class).putExtra("shop_item", shopItemList.get(itemPosition)).putExtra("position", itemPosition), 100);
+            }
+        });
+
+
+
+    }
+
+    private void deleteShopItem(int position) {
+        ShopItem shopItem = shopItemList.get(position);
+        try {
+            db.shopItemDAO().delete(shopItem);
+            shopItemList.remove(position);
+            notifyDataSetChanged();
+            Toast.makeText(context, "Shop item deleted successfully", Toast.LENGTH_LONG).show();
+        } catch (Exception ex){
+            Log.e("Delete Shop", ex.getMessage());
+            Toast.makeText(context, "Shop item not deleted. Something wrong!", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public class ListViewHolder extends RecyclerView.ViewHolder {
+        TextView shopNameTextView;
+        TextView quantityTextView;
+        ImageView crossButtonImageView;
+        ImageView editButtonImageView;
+
+        public ListViewHolder(View itemView) {
+            super(itemView);
+
+            shopNameTextView = itemView.findViewById(R.id.shopNameTextView);
+            quantityTextView = itemView.findViewById(R.id.quantityTextView);
+            crossButtonImageView = itemView.findViewById(R.id.crossImageView);
+            editButtonImageView = itemView.findViewById(R.id.editImageView);
+        }
+    }
+
+    public interface OnShopItemClick {
+        void onShopItemClick(int pos);
+    }
+
+    @Override
+    public int getItemCount() {
+        return shopItemList.size();
+    }
+}
+
