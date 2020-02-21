@@ -13,12 +13,12 @@
     android:background="@color/white">
 
     <TextView
-        android:id="@+id/typeNameTextView"
+        android:id="@+id/foodNameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        tools:text="John Doe"
+        tools:text="Apple"
         android:textSize="18sp"
         android:textStyle="bold"/>
 
@@ -45,21 +45,40 @@
         android:contentDescription="delete_button" />
 
     <TextView
-        android:id="@+id/typeDaysTitle"
+        android:id="@+id/remindDateTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/typeNameTextView"
+        app:layout_constraintTop_toBottomOf="@id/quantityTitle"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:text="Days Before Expiry Date:"
+        android:text="Remind me on: "
         android:textStyle="bold"/>
 
     <TextView
-        android:id="@+id/typeDaysTextView"
+        android:id="@+id/remindDateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="2020-2-24 5pm"
+        app:layout_constraintTop_toBottomOf="@id/quantityTitle"
+        app:layout_constraintLeft_toRightOf="@id/remindDateTitle"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"/>
+
+    <TextView
+        android:id="@+id/quantityTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/foodNameTextView"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:text="Quantity: "
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/quantityTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="5"
-        app:layout_constraintTop_toBottomOf="@id/typeNameTextView"
-        app:layout_constraintLeft_toRightOf="@id/typeDaysTitle"
+        app:layout_constraintTop_toBottomOf="@id/foodNameTextView"
+        app:layout_constraintLeft_toRightOf="@id/quantityTitle"
         android:layout_marginStart="4dp"
         android:layout_marginLeft="4dp"/>
 

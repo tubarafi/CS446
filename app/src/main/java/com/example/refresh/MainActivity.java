@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
                             selectedFragment = new CameraFragment();
                             break;
                         case R.id.nav_config:
-                            selectedFragment = new TypeFragment();
+                            selectedFragment = new ShoppingFragment();
                             break;
                     }
 

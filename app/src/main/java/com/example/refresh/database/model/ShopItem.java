@@ -5,8 +5,10 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "alert_type")
-public class AlertType {
+import java.io.Serializable;
+
+@Entity(tableName = "shop_item")
+public class ShopItem implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private long id;
@@ -15,13 +17,11 @@ public class AlertType {
     @NonNull
     private String name;
 
-    @ColumnInfo(name = "notification_days")
-    @NonNull
-    private int notificationDays;
+    private int quantity;
 
-    public AlertType(String name, int notificationDays) {
+    public ShopItem(@NonNull String name, int quantity) {
         this.name = name;
-        this.notificationDays = notificationDays;
+        this.quantity = quantity;
     }
 
     public long getId() {
@@ -32,19 +32,20 @@ public class AlertType {
         this.id = id;
     }
 
+    @NonNull
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@NonNull String name) {
         this.name = name;
     }
 
-    public int getNotificationDays() {
-        return notificationDays;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void setNotificationDays(int notificationDays) {
-        this.notificationDays = notificationDays;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 }
