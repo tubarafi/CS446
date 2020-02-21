@@ -31,24 +31,25 @@
         android:id="@+id/remindDateEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:hint="Reminder date"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/quantityEditText"
-        android:hint="Reminder date"
-        android:inputType="datetime"/>
+        app:layout_constraintTop_toBottomOf="@+id/quantityEditText" />
 
     <EditText
         android:id="@+id/noteEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/remindDateEditText"
+        android:layout_marginTop="45dp"
+        android:hint="note"
+        android:inputType="textMultiLine"
         android:lines="5"
         android:maxLines="10"
         android:scrollbars="vertical"
-        android:hint="note"
-        android:inputType="textMultiLine"/>
+        app:layout_constraintHorizontal_bias="0.473"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/remindDateEditText" />
 
     <Button
         android:id="@+id/createButton"
