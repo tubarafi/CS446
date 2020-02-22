@@ -54,7 +54,13 @@ public class FoodItemListAdapter extends RecyclerView.Adapter<FoodItemListAdapte
 
         holder.foodNameTextView.setText(foodItem.getName());
         holder.quantityTextView.setText(String.valueOf(foodItem.getQuantity()));
-        holder.RemindDateTextView.setText(foodItem.getRemindMeOnDate());
+        if(foodItem.getRemindMeOnDate() == null || foodItem.getRemindMeOnDate().equals("")){
+            holder.remindDateTitleTextView.setVisibility(View.GONE);
+        }
+        else{
+            holder.remindDateTitleTextView.setVisibility(View.VISIBLE);
+            holder.remindDateTextView.setText(foodItem.getRemindMeOnDate());
+        }
 
         holder.crossButtonImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,7 +115,8 @@ public class FoodItemListAdapter extends RecyclerView.Adapter<FoodItemListAdapte
     public class ListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView foodNameTextView;
         TextView quantityTextView;
-        TextView RemindDateTextView;
+        TextView remindDateTitleTextView;
+        TextView remindDateTextView;
         ImageView crossButtonImageView;
         ImageView editButtonImageView;
         private OnFoodItemListener onFoodItemListener;
@@ -120,7 +127,8 @@ public class FoodItemListAdapter extends RecyclerView.Adapter<FoodItemListAdapte
             itemView.setOnClickListener(this);
             foodNameTextView = itemView.findViewById(R.id.foodNameTextView);
             quantityTextView = itemView.findViewById(R.id.quantityTextView);
-            RemindDateTextView = itemView.findViewById(R.id.remindDateTextView);
+            remindDateTitleTextView = itemView.findViewById(R.id.remindDateTitle);
+            remindDateTextView = itemView.findViewById(R.id.remindDateTextView);
             crossButtonImageView = itemView.findViewById(R.id.crossImageView);
             editButtonImageView = itemView.findViewById(R.id.editImageView);
         }
