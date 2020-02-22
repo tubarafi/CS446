@@ -44,7 +44,7 @@ public class FoodItemListAdapter extends RecyclerView.Adapter<FoodItemListAdapte
     @Override
     public ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = layoutInflater.inflate(R.layout.food_item, parent, false);
-        return new ListViewHolder(view);
+        return new ListViewHolder(view, homeFragment);
     }
 
     @Override
@@ -106,25 +106,32 @@ public class FoodItemListAdapter extends RecyclerView.Adapter<FoodItemListAdapte
         }
     }
 
-    public class ListViewHolder extends RecyclerView.ViewHolder {
+    public class ListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView foodNameTextView;
         TextView quantityTextView;
         TextView RemindDateTextView;
         ImageView crossButtonImageView;
         ImageView editButtonImageView;
+        private OnFoodItemListener onFoodItemListener;
 
-        public ListViewHolder(View itemView) {
+        public ListViewHolder(View itemView, OnFoodItemListener onFoodItemListener) {
             super(itemView);
-
+            this.onFoodItemListener = onFoodItemListener;
+            itemView.setOnClickListener(this);
             foodNameTextView = itemView.findViewById(R.id.foodNameTextView);
             quantityTextView = itemView.findViewById(R.id.quantityTextView);
             RemindDateTextView = itemView.findViewById(R.id.remindDateTextView);
             crossButtonImageView = itemView.findViewById(R.id.crossImageView);
             editButtonImageView = itemView.findViewById(R.id.editImageView);
         }
+
+        @Override
+        public void onClick(View view) {
+            onFoodItemListener.onFoodItemClick(getAdapterPosition());
+        }
     }
 
-    public interface OnFoodItemClick {
+    public interface OnFoodItemListener{
         void onFoodItemClick(int pos);
     }
 

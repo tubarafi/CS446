@@ -44,7 +44,7 @@ public class ShopItemListAdapter extends RecyclerView.Adapter<ShopItemListAdapte
     @Override
     public ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = layoutInflater.inflate(R.layout.shop_item, parent, false);
-        return new ListViewHolder(view);
+        return new ListViewHolder(view, shoppingFragment);
     }
 
     @Override
@@ -105,23 +105,30 @@ public class ShopItemListAdapter extends RecyclerView.Adapter<ShopItemListAdapte
         }
     }
 
-    public class ListViewHolder extends RecyclerView.ViewHolder {
+    public class ListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView shopNameTextView;
         TextView quantityTextView;
         ImageView crossButtonImageView;
         ImageView editButtonImageView;
+        OnShopItemListener onShopItemListener;
 
-        public ListViewHolder(View itemView) {
+        public ListViewHolder(View itemView, OnShopItemListener onShopItemListener) {
             super(itemView);
-
+            this.onShopItemListener = onShopItemListener;
+            itemView.setOnClickListener(this);
             shopNameTextView = itemView.findViewById(R.id.shopNameTextView);
             quantityTextView = itemView.findViewById(R.id.quantityTextView);
             crossButtonImageView = itemView.findViewById(R.id.crossImageView);
             editButtonImageView = itemView.findViewById(R.id.editImageView);
         }
+
+        @Override
+        public void onClick(View view) {
+            onShopItemListener.onShopItemClick(getAdapterPosition());
+        }
     }
 
-    public interface OnShopItemClick {
+    public interface OnShopItemListener {
         void onShopItemClick(int pos);
     }
 

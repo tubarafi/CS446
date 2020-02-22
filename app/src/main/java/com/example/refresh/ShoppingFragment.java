@@ -1,8 +1,11 @@
 package com.example.refresh;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.refresh.adapter.ShopItemListAdapter;
 import com.example.refresh.database.AppDatabase;
+import com.example.refresh.database.model.FoodItem;
 import com.example.refresh.database.model.ShopItem;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -24,7 +28,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShoppingFragment extends Fragment implements ShopItemListAdapter.OnShopItemClick{
+public class ShoppingFragment extends Fragment implements ShopItemListAdapter.OnShopItemListener{
 
     private List<ShopItem> shopItemList = new ArrayList<>();
 
@@ -114,7 +118,35 @@ public class ShoppingFragment extends Fragment implements ShopItemListAdapter.On
 
     @Override
     public void onShopItemClick(int pos) {
-        //TODO: Display recipes based on selected shop item.
+        final int position = pos;
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+        alertDialogBuilder.setMessage("Are you sure, You wanted to move to fridge?");
+        alertDialogBuilder.setPositiveButton("Yes",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        ShopItem item = shopItemList.get(position);
+                        FoodItem foodItem = new FoodItem(item.getName(), "", item.getQuantity(), "");
+                        try {
+                            db.foodItemDAO().insert(foodItem);
+                            db.shopItemDAO().delete(item);
+                            shopItemList.remove(position);
+                            shopItemListAdapter.notifyDataSetChanged();
+                        } catch (Exception ex){
+                            Log.e("Move Shop item failed", ex.getMessage());
+                        }
+                    }
+                });
+
+        alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 
 

@@ -26,7 +26,7 @@ import java.util.List;
 import com.example.refresh.adapter.FoodItemListAdapter;
 import com.example.refresh.database.AppDatabase;
 
-public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFoodItemClick {
+public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFoodItemListener {
 
     private List<FoodItem> foodItemList = new ArrayList<>();
 
