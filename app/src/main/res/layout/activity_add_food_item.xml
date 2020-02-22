@@ -14,7 +14,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:hint="Name"
+        android:hint="Item Name"
         android:inputType="text"/>
 
     <EditText
@@ -31,7 +31,7 @@
         android:id="@+id/remindDateEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Reminder date"
+        android:hint="Reminder Date"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/quantityEditText" />
@@ -41,7 +41,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="45dp"
-        android:hint="note"
+        android:hint="Notes"
         android:inputType="textMultiLine"
         android:lines="5"
         android:maxLines="10"

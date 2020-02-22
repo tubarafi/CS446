@@ -66,7 +66,7 @@ public class FoodItemListAdapter extends RecyclerView.Adapter<FoodItemListAdapte
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-                alertDialogBuilder.setMessage("Are you sure, You wanted to delete this food item?");
+                alertDialogBuilder.setMessage("Are you sure you want to delete this food item?");
                 alertDialogBuilder.setPositiveButton("Yes",
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -101,14 +101,15 @@ public class FoodItemListAdapter extends RecyclerView.Adapter<FoodItemListAdapte
 
     private void deleteFoodItem(int position) {
         FoodItem foodItem = foodItemList.get(position);
+        String foodName = foodItem.getName();
         try {
             db.foodItemDAO().delete(foodItem);
             foodItemList.remove(position);
             notifyDataSetChanged();
-            Toast.makeText(context, "Food item deleted successfully", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, foodName + " has been deleted.", Toast.LENGTH_LONG).show();
         } catch (Exception ex){
             Log.e("Delete Food", ex.getMessage());
-            Toast.makeText(context, "Food item not deleted. Something wrong!", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Error: Failed to delete " + foodName + ".", Toast.LENGTH_LONG).show();
         }
     }
 

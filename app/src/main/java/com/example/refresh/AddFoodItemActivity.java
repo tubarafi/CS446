@@ -1,9 +1,6 @@
 package com.example.refresh;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.DatePickerDialog;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
@@ -12,6 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.refresh.database.AppDatabase;
 import com.example.refresh.database.model.FoodItem;
@@ -69,6 +68,7 @@ public class AddFoodItemActivity extends AppCompatActivity {
                         remindDateEditText.setText((monthOfYear + 1) + "/" + dayOfMonth + "/" + year);
                     }
                 }, year, month, day);
+                picker.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
                 picker.show();
             }
         });
@@ -79,7 +79,6 @@ public class AddFoodItemActivity extends AppCompatActivity {
                 if (update) {
                     foodItem.setName(nameEditText.getText().toString());
                     foodItem.setQuantity(Integer.valueOf(quantityEditText.getText().toString()));
-                    //TODO: need to change to datetime picker in "activity_add_food_item.xml, implement related callbacks"
                     foodItem.setRemindMeOnDate(remindDateEditText.getText().toString());
                     foodItem.setNote(noteEditText.getText().toString());
 
