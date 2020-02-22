@@ -1,6 +1,7 @@
 package com.example.refresh;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -25,6 +27,7 @@ public class AddFoodItemActivity extends AppCompatActivity {
 
     private AppDatabase db;
     private FoodItem foodItem;
+    private boolean dateSelected = false;
     private boolean update = false;
     private int pos;
 
@@ -58,6 +61,7 @@ public class AddFoodItemActivity extends AppCompatActivity {
         remindDateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                dateSelected = true;
                 final Calendar cldr = Calendar.getInstance();
                 int day = cldr.get(Calendar.DAY_OF_MONTH);
                 int month = cldr.get(Calendar.MONTH);
@@ -76,25 +80,40 @@ public class AddFoodItemActivity extends AppCompatActivity {
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (update) {
-                    foodItem.setName(nameEditText.getText().toString());
-                    foodItem.setQuantity(Integer.valueOf(quantityEditText.getText().toString()));
-                    foodItem.setRemindMeOnDate(remindDateEditText.getText().toString());
-                    foodItem.setNote(noteEditText.getText().toString());
-
-                    try {
-                        db.foodItemDAO().update(foodItem);
-                        setResult(foodItem, 2); // update
-                    } catch (Exception ex) {
-                        Log.e("Update Food failed", ex.getMessage());
-                    }
+                Context context = getApplicationContext();
+                String itemName = nameEditText.getText().toString();
+                String itemQuantity = quantityEditText.getText().toString();
+                if (itemName.equals("")) {
+                    Toast.makeText(context, "Please enter an item name.", Toast.LENGTH_LONG).show();
+                } else if (itemQuantity.equals("")) {
+                    Toast.makeText(context, "Please enter a quantity.", Toast.LENGTH_LONG).show();
+                } else if (!dateSelected) {
+                    Toast.makeText(context, "Please enter a date.", Toast.LENGTH_LONG).show();
                 } else {
-                    foodItem = new FoodItem(nameEditText.getText().toString(), remindDateEditText.getText().toString(), Integer.valueOf(quantityEditText.getText().toString()), noteEditText.getText().toString());
-                    try {
-                        db.foodItemDAO().insert(foodItem);
-                        setResult(foodItem, 1); //create
-                    } catch (Exception ex) {
-                        Log.e("Add Food failed", ex.getMessage());
+                    if (update) {
+                        foodItem.setName(nameEditText.getText().toString());
+                        foodItem.setQuantity(Integer.valueOf(quantityEditText.getText().toString()));
+                        foodItem.setRemindMeOnDate(remindDateEditText.getText().toString());
+                        foodItem.setNote(noteEditText.getText().toString());
+
+                        try {
+                            db.foodItemDAO().update(foodItem);
+                            setResult(foodItem, 2); // update
+                            Toast.makeText(context, "Updated " + foodItem.getName() + ".", Toast.LENGTH_LONG).show();
+
+                        } catch (Exception ex) {
+                            Log.e("Update Food failed", ex.getMessage());
+                        }
+                    } else {
+                        foodItem = new FoodItem(nameEditText.getText().toString(), remindDateEditText.getText().toString(), Integer.valueOf(quantityEditText.getText().toString()), noteEditText.getText().toString());
+                        try {
+                            db.foodItemDAO().insert(foodItem);
+                            setResult(foodItem, 1); //create
+                            Toast.makeText(context, "Added " + foodItem.getName() + " to fridge.", Toast.LENGTH_LONG).show();
+
+                        } catch (Exception ex) {
+                            Log.e("Add Food failed", ex.getMessage());
+                        }
                     }
                 }
             }

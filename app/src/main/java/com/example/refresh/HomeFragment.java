@@ -3,7 +3,6 @@ package com.example.refresh;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +38,7 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Food Item List");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Food Item List");
         db = AppDatabase.getAppDatabase(getContext());
         foodItemListEmptyTextView = rootView.findViewById(R.id.emptyListTextView);
         recyclerView = rootView.findViewById(R.id.recyclerView);
@@ -57,7 +56,6 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
         new RetrieveTask(this).execute();
         return rootView;
     }
-
 
 
     private static class RetrieveTask extends AsyncTask<Void, Void, List<FoodItem>> {
@@ -97,7 +95,7 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
             if (resultCode == 1) {
                 foodItemList.add((FoodItem) data.getSerializableExtra("food_item"));
             } else if (resultCode == 2) {
-                if(pos != -1) {
+                if (pos != -1) {
                     foodItemList.set(pos, (FoodItem) data.getSerializableExtra("food_item"));
                 }
             }

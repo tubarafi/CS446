@@ -28,7 +28,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShoppingFragment extends Fragment implements ShopItemListAdapter.OnShopItemListener{
+public class ShoppingFragment extends Fragment implements ShopItemListAdapter.OnShopItemListener {
 
     private List<ShopItem> shopItemList = new ArrayList<>();
 
@@ -41,7 +41,7 @@ public class ShoppingFragment extends Fragment implements ShopItemListAdapter.On
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_shopping, container, false);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Shop Item List");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Shopping List");
         db = AppDatabase.getAppDatabase(getContext());
         shopItemListEmptyTextView = rootView.findViewById(R.id.emptyListTextView);
         recyclerView = rootView.findViewById(R.id.recyclerView);
@@ -97,7 +97,7 @@ public class ShoppingFragment extends Fragment implements ShopItemListAdapter.On
             if (resultCode == 1) {
                 shopItemList.add((ShopItem) data.getSerializableExtra("shop_item"));
             } else if (resultCode == 2) {
-                if(pos != -1) {
+                if (pos != -1) {
                     shopItemList.set(pos, (ShopItem) data.getSerializableExtra("shop_item"));
                 }
             }
@@ -120,7 +120,8 @@ public class ShoppingFragment extends Fragment implements ShopItemListAdapter.On
     public void onShopItemClick(int pos) {
         final int position = pos;
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
-        alertDialogBuilder.setMessage("Are you sure, You wanted to move to fridge?");
+        ShopItem item = shopItemList.get(position);
+        alertDialogBuilder.setMessage("Are you sure you want to move " + item.getName() + " to the fridge?");
         alertDialogBuilder.setPositiveButton("Yes",
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -132,13 +133,13 @@ public class ShoppingFragment extends Fragment implements ShopItemListAdapter.On
                             db.shopItemDAO().delete(item);
                             shopItemList.remove(position);
                             shopItemListAdapter.notifyDataSetChanged();
-                        } catch (Exception ex){
+                        } catch (Exception ex) {
                             Log.e("Move Shop item failed", ex.getMessage());
                         }
                     }
                 });
 
-        alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();

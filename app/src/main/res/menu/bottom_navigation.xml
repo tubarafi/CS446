@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_home"
-        android:icon="@drawable/ic_home_black_24dp"
-        android:title="Home" />
+        android:icon="@drawable/ic_fridge_black_24dp"
+        android:title="Fridge" />
 
     <item
         android:id="@+id/nav_camera"
@@ -13,5 +13,5 @@
     <item
         android:id="@+id/nav_config"
         android:icon="@drawable/ic_shopping_cart_black_24dp"
-        android:title="Shopping Cart" />
+        android:title="Shopping List" />
 </menu>

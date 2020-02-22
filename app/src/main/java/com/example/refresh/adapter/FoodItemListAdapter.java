@@ -1,6 +1,5 @@
 package com.example.refresh.adapter;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -54,10 +53,9 @@ public class FoodItemListAdapter extends RecyclerView.Adapter<FoodItemListAdapte
 
         holder.foodNameTextView.setText(foodItem.getName());
         holder.quantityTextView.setText(String.valueOf(foodItem.getQuantity()));
-        if(foodItem.getRemindMeOnDate() == null || foodItem.getRemindMeOnDate().equals("")){
+        if (foodItem.getRemindMeOnDate() == null || foodItem.getRemindMeOnDate().equals("")) {
             holder.remindDateTitleTextView.setVisibility(View.GONE);
-        }
-        else{
+        } else {
             holder.remindDateTitleTextView.setVisibility(View.VISIBLE);
             holder.remindDateTextView.setText(foodItem.getRemindMeOnDate());
         }
@@ -66,7 +64,7 @@ public class FoodItemListAdapter extends RecyclerView.Adapter<FoodItemListAdapte
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-                alertDialogBuilder.setMessage("Are you sure you want to delete this food item?");
+                alertDialogBuilder.setMessage("Are you sure you want to remove " + foodItem.getName() + " from your fridge?");
                 alertDialogBuilder.setPositiveButton("Yes",
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -75,7 +73,7 @@ public class FoodItemListAdapter extends RecyclerView.Adapter<FoodItemListAdapte
                             }
                         });
 
-                alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
+                alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -96,7 +94,6 @@ public class FoodItemListAdapter extends RecyclerView.Adapter<FoodItemListAdapte
         });
 
 
-
     }
 
     private void deleteFoodItem(int position) {
@@ -106,14 +103,14 @@ public class FoodItemListAdapter extends RecyclerView.Adapter<FoodItemListAdapte
             db.foodItemDAO().delete(foodItem);
             foodItemList.remove(position);
             notifyDataSetChanged();
-            Toast.makeText(context, foodName + " has been deleted.", Toast.LENGTH_LONG).show();
-        } catch (Exception ex){
+            Toast.makeText(context, foodName + " has been removed.", Toast.LENGTH_LONG).show();
+        } catch (Exception ex) {
             Log.e("Delete Food", ex.getMessage());
-            Toast.makeText(context, "Error: Failed to delete " + foodName + ".", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Error: Failed to remove " + foodName + ".", Toast.LENGTH_LONG).show();
         }
     }
 
-    public class ListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView foodNameTextView;
         TextView quantityTextView;
         TextView remindDateTitleTextView;
@@ -140,7 +137,7 @@ public class FoodItemListAdapter extends RecyclerView.Adapter<FoodItemListAdapte
         }
     }
 
-    public interface OnFoodItemListener{
+    public interface OnFoodItemListener {
         void onFoodItemClick(int pos);
     }
 

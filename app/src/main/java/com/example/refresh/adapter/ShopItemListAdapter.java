@@ -16,7 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.refresh.AddShopItemActivity;
-import com.example.refresh.HomeFragment;
 import com.example.refresh.R;
 import com.example.refresh.ShoppingFragment;
 import com.example.refresh.database.AppDatabase;
@@ -59,7 +58,7 @@ public class ShopItemListAdapter extends RecyclerView.Adapter<ShopItemListAdapte
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-                alertDialogBuilder.setMessage("Are you sure, You wanted to delete this shop item?");
+                alertDialogBuilder.setMessage("Are you sure you want to remove " + shopItem.getName() + " from your shopping list?");
                 alertDialogBuilder.setPositiveButton("Yes",
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -68,7 +67,7 @@ public class ShopItemListAdapter extends RecyclerView.Adapter<ShopItemListAdapte
                             }
                         });
 
-                alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
+                alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -89,23 +88,23 @@ public class ShopItemListAdapter extends RecyclerView.Adapter<ShopItemListAdapte
         });
 
 
-
     }
 
     private void deleteShopItem(int position) {
         ShopItem shopItem = shopItemList.get(position);
+        String shopItemName = shopItem.getName();
         try {
             db.shopItemDAO().delete(shopItem);
             shopItemList.remove(position);
             notifyDataSetChanged();
-            Toast.makeText(context, "Shop item deleted successfully", Toast.LENGTH_LONG).show();
-        } catch (Exception ex){
+            Toast.makeText(context, shopItemName + " has been removed.", Toast.LENGTH_LONG).show();
+        } catch (Exception ex) {
             Log.e("Delete Shop", ex.getMessage());
-            Toast.makeText(context, "Shop item not deleted. Something wrong!", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Error: Failed to remove " + shopItemName + ".", Toast.LENGTH_LONG).show();
         }
     }
 
-    public class ListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView shopNameTextView;
         TextView quantityTextView;
         ImageView crossButtonImageView;
