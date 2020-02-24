@@ -47,10 +47,19 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
         recyclerView.setAdapter(foodItemListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         FloatingActionButton fab = rootView.findViewById(R.id.fab);
+        FloatingActionButton cameraFab = rootView.findViewById(R.id.fab_camera);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivityForResult(new Intent(getActivity(), AddFoodItemActivity.class), 100);
+            }
+        });
+
+        cameraFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), ScannerActivity.class);
+                startActivity(intent);
             }
         });
         new RetrieveTask(this).execute();

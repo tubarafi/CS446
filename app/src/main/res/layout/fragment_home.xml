@@ -23,4 +23,15 @@
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@drawable/ic_add_box_white_24dp" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginBottom="85dp"
+        app:layout_anchor="@id/fab"
+        app:layout_anchorGravity="top"
+        app:srcCompat="@drawable/ic_photo_camera_black_24dp" />
+
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
