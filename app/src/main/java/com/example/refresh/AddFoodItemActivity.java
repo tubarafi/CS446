@@ -1,6 +1,9 @@
 package com.example.refresh;
 
 import android.app.DatePickerDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +16,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.example.refresh.database.AppDatabase;
 import com.example.refresh.database.model.FoodItem;
@@ -26,6 +31,7 @@ public class AddFoodItemActivity extends AppCompatActivity {
     private DatePickerDialog picker;
 
     private AppDatabase db;
+    private NotificationManagerCompat mNotificationManagerCompat;
     private FoodItem foodItem;
     private boolean dateSelected = false;
     private boolean update = false;
@@ -111,6 +117,7 @@ public class AddFoodItemActivity extends AppCompatActivity {
                             setResult(foodItem, 1); //create
                             Toast.makeText(context, "Added " + foodItem.getName() + " to fridge.", Toast.LENGTH_LONG).show();
 
+                            scheduleNotification(foodItem);
                         } catch (Exception ex) {
                             Log.e("Add Food failed", ex.getMessage());
                         }
@@ -130,5 +137,27 @@ public class AddFoodItemActivity extends AppCompatActivity {
     private void setResult(FoodItem food, int flag) {
         setResult(flag, new Intent().putExtra("food_item", food).putExtra("position", pos));
         finish();
+    }
+
+    private void scheduleNotification(FoodItem food) {
+        mNotificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
+        // Create notification channel
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationChannel channel = new NotificationChannel("expiry_notify", "name", importance);
+        // Construct the notification
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(AddFoodItemActivity.this, "expiry_notify")
+                .setContentTitle("Scheduled Notification")
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(foodItem.getName() + " is expiring today! Browse recipes that use it now."))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setSmallIcon(R.drawable.ic_app_icon)
+                .setAutoCancel(true);
+        Intent notifyIntent = new Intent(AddFoodItemActivity.this, MainActivity.class);
+        notifyIntent.putExtra("menuFragment", "RecipeFragment");
+        notifyIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(AddFoodItemActivity.this, 0, notifyIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        builder.setContentIntent(resultPendingIntent);
+        // TODO: Schedule notification based on expiry date instead of displaying immediately
+        mNotificationManagerCompat.notify(0, builder.build());
     }
 }
