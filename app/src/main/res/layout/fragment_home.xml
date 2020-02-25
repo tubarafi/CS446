@@ -31,7 +31,7 @@
         android:layout_marginBottom="85dp"
         app:layout_anchor="@id/fab"
         app:layout_anchorGravity="top"
-        app:srcCompat="@drawable/ic_photo_camera_black_24dp" />
+        app:srcCompat="@drawable/ic_photo_camera_white_24dp" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

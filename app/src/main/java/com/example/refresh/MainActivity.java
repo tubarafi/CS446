@@ -32,10 +32,10 @@ public class MainActivity extends AppCompatActivity {
                     Fragment selectedFragment = new HomeFragment();
 
                     switch (item.getItemId()) {
-                        case R.id.nav_camera:
-                            selectedFragment = new CameraFragment();
+                        case R.id.nav_recipe:
+                            selectedFragment = new RecipeFragment();
                             break;
-                        case R.id.nav_config:
+                        case R.id.nav_shop:
                             selectedFragment = new ShoppingFragment();
                             break;
                     }
