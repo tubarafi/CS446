@@ -42,6 +42,7 @@ public class AddFoodItemActivity extends AppCompatActivity {
     private boolean update = false;
     private int pos;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

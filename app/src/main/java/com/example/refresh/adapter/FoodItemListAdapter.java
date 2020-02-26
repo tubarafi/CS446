@@ -123,7 +123,7 @@ public class FoodItemListAdapter extends RecyclerView.Adapter<FoodItemListAdapte
             super(itemView);
             this.onFoodItemListener = onFoodItemListener;
             itemView.setOnClickListener(this);
-            foodNameTextView = itemView.findViewById(R.id.foodNameTextView);
+            foodNameTextView = itemView.findViewById(R.id.recipeNameTextView);
             quantityTextView = itemView.findViewById(R.id.quantityTextView);
             remindDateTitleTextView = itemView.findViewById(R.id.remindDateTitle);
             remindDateTextView = itemView.findViewById(R.id.remindDateTextView);
