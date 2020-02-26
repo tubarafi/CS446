@@ -19,15 +19,14 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 
-        String menuFragment = getIntent().getStringExtra("menuFragment");
-        if (menuFragment != null) {
-            if (menuFragment.equals("RecipeFragment")) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new RecipeFragment()).commit();
-            }
-        } else if (savedInstanceState == null) {
+        if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new HomeFragment()).commit();
+        }
+
+        String menuFragment = getIntent().getStringExtra("menuFragment");
+        if (menuFragment != null && menuFragment.equals("RecipeFragment")) {
+            bottomNav.setSelectedItemId(R.id.nav_recipe);
         }
     }
 
