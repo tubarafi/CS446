@@ -3,4 +3,5 @@
     <string name="bottom_nav_fridge">Fridge</string>
     <string name="bottom_nav_recipe">Recipes</string>
     <string name="bottom_nav_shop">Shopping List</string>
+    <string name="null_recipe_screen">Nothing to cook with :(</string>
 </resources>

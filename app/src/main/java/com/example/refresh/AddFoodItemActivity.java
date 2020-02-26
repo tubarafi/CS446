@@ -8,6 +8,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.InputType;
@@ -147,13 +148,17 @@ public class AddFoodItemActivity extends AppCompatActivity {
 
     private void scheduleNotification(Context context, FoodItem foodItem) {
         // Create notification channel
-        int importance = NotificationManager.IMPORTANCE_DEFAULT;
-        NotificationChannel channel = new NotificationChannel("pls_work", "ReFresh", importance);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("pls_work", "ReFresh", importance);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
         // Create notification content
         NotificationCompat.Builder builder = new NotificationCompat.Builder(AddFoodItemActivity.this, "pls_work")
-                .setContentTitle("Scheduled Notification")
+                .setContentTitle("There's food expiring soon!")
                 .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(foodItem.getName() + " is expiring today! Browse recipes that use it now."))
+                        .bigText("Use your " + foodItem.getName() + " by today! Check out some recipes now."))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setSmallIcon(R.drawable.ic_app_icon)
                 .setAutoCancel(true);
