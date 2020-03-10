@@ -35,6 +35,7 @@ project.properties
 *.iml
 *.ipr
 *.iws
+google-services.json
 
 # Gradle-based build
 .gradle
