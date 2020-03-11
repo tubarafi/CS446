@@ -69,19 +69,22 @@ public class ScannerActivity extends AppCompatActivity {
         imageCap = findViewById(R.id.imgCapture);
         progressBar = findViewById(R.id.progressbar);
         db = AppDatabase.getAppDatabase(ScannerActivity.this);
-        /*
+
         FirebaseVisionCloudImageLabelerOptions options = new FirebaseVisionCloudImageLabelerOptions.Builder()
                                                         .setConfidenceThreshold(0.85f)
                                                         .build();
         labeler = FirebaseVision.getInstance()
                 .getCloudImageLabeler(options);
 
-         */
+
+        /*
         FirebaseVisionOnDeviceImageLabelerOptions options = new FirebaseVisionOnDeviceImageLabelerOptions.Builder()
                 .setConfidenceThreshold(0.85f)
                 .build();
         labeler = FirebaseVision.getInstance()
                 .getOnDeviceImageLabeler(options);
+
+         */
 
         textureView = findViewById(R.id.view_finder);
 
