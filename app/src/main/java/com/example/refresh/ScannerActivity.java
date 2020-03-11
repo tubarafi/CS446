@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraX;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureConfig;
-import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.core.PreviewConfig;
 import androidx.core.app.ActivityCompat;
@@ -14,9 +13,12 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.util.Rational;
 import android.util.Size;
 import android.view.Surface;
@@ -25,19 +27,35 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.label.FirebaseVisionCloudImageLabelerOptions;
+import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel;
+import com.google.firebase.ml.vision.label.FirebaseVisionImageLabeler;
+import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceImageLabelerOptions;
+
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.Executors;
 
 public class ScannerActivity extends AppCompatActivity {
 
     private int REQUEST_CODE_PERMISSIONS = 101;
     private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"};
-    TextureView textureView;
+    private TextureView textureView;
+    private FirebaseVisionImageLabeler labeler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scanner);
+        FirebaseVisionCloudImageLabelerOptions options = new FirebaseVisionCloudImageLabelerOptions.Builder()
+                                                        .setConfidenceThreshold(0.85f)
+                                                        .build();
+        labeler = FirebaseVision.getInstance()
+                .getCloudImageLabeler(options);
 
         textureView = findViewById(R.id.view_finder);
 
@@ -86,8 +104,27 @@ public class ScannerActivity extends AppCompatActivity {
                 imgCap.takePicture(file,  new ImageCapture.OnImageSavedListener() {
                     @Override
                     public void onImageSaved(@NonNull File file) {
-                        String msg = "Pic captured at " + file.getAbsolutePath();
-                        Toast.makeText(getBaseContext(), msg,Toast.LENGTH_LONG).show();
+                        Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
+                        FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
+                        labeler.processImage(image)
+                                .addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionImageLabel>>() {
+                                    @Override
+                                    public void onSuccess(List<FirebaseVisionImageLabel> labels) {
+                                        for (FirebaseVisionImageLabel label: labels) {
+                                            String text = label.getText();
+                                            String entityId = label.getEntityId();
+                                            float confidence = label.getConfidence();
+                                            Log.d("Test: ", text);
+                                        }
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        // Task failed with an exception
+                                        // ...
+                                    }
+                                });
                     }
 
                     @Override
