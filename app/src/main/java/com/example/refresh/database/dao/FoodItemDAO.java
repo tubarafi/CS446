@@ -24,6 +24,9 @@ public interface FoodItemDAO {
     @Insert
     long insert(FoodItem item);
 
+    @Insert
+    void insertAll(List<FoodItem> items);
+
     @Update
     void update(FoodItem item);
 

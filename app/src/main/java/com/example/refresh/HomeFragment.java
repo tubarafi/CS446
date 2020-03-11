@@ -58,8 +58,7 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
         cameraFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), ScannerActivity.class);
-                startActivity(intent);
+                startActivityForResult(new Intent(getActivity(), ScannerActivity.class), 100);
             }
         });
         new RetrieveTask(this).execute();
@@ -107,6 +106,9 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
                 if (pos != -1) {
                     foodItemList.set(pos, (FoodItem) data.getSerializableExtra("food_item"));
                 }
+            }
+            else if (resultCode == 3) {
+                foodItemList.addAll((List<FoodItem>) data.getSerializableExtra("food_items"));
             }
             listVisibility();
         }

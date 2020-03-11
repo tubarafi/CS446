@@ -12,6 +12,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,10 +26,16 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.refresh.database.AppDatabase;
+import com.example.refresh.database.model.FoodItem;
+import com.example.refresh.database.model.ShopItem;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.label.FirebaseVisionCloudImageLabelerOptions;
@@ -37,8 +44,13 @@ import com.google.firebase.ml.vision.label.FirebaseVisionImageLabeler;
 import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceImageLabelerOptions;
 
 import java.io.File;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 public class ScannerActivity extends AppCompatActivity {
 
@@ -46,16 +58,30 @@ public class ScannerActivity extends AppCompatActivity {
     private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"};
     private TextureView textureView;
     private FirebaseVisionImageLabeler labeler;
+    private FloatingActionButton imageCap;
+    private ProgressBar progressBar;
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scanner);
+        imageCap = findViewById(R.id.imgCapture);
+        progressBar = findViewById(R.id.progressbar);
+        db = AppDatabase.getAppDatabase(ScannerActivity.this);
+        /*
         FirebaseVisionCloudImageLabelerOptions options = new FirebaseVisionCloudImageLabelerOptions.Builder()
                                                         .setConfidenceThreshold(0.85f)
                                                         .build();
         labeler = FirebaseVision.getInstance()
                 .getCloudImageLabeler(options);
+
+         */
+        FirebaseVisionOnDeviceImageLabelerOptions options = new FirebaseVisionOnDeviceImageLabelerOptions.Builder()
+                .setConfidenceThreshold(0.85f)
+                .build();
+        labeler = FirebaseVision.getInstance()
+                .getOnDeviceImageLabeler(options);
 
         textureView = findViewById(R.id.view_finder);
 
@@ -97,32 +123,27 @@ public class ScannerActivity extends AppCompatActivity {
                 .setTargetRotation(getWindowManager().getDefaultDisplay().getRotation()).build();
         final ImageCapture imgCap = new ImageCapture(imageCaptureConfig);
 
-        findViewById(R.id.imgCapture).setOnClickListener(new View.OnClickListener() {
+        imageCap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 File file = new File(Environment.getExternalStorageDirectory() + "/" + System.currentTimeMillis() + ".png");
                 imgCap.takePicture(file,  new ImageCapture.OnImageSavedListener() {
                     @Override
                     public void onImageSaved(@NonNull File file) {
+                        progressBar.setVisibility(View.VISIBLE);
                         Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
                         FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
                         labeler.processImage(image)
                                 .addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionImageLabel>>() {
                                     @Override
                                     public void onSuccess(List<FirebaseVisionImageLabel> labels) {
-                                        for (FirebaseVisionImageLabel label: labels) {
-                                            String text = label.getText();
-                                            String entityId = label.getEntityId();
-                                            float confidence = label.getConfidence();
-                                            Log.d("Test: ", text);
-                                        }
+                                        addFoodItems(labels);
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                        // Task failed with an exception
-                                        // ...
+                                        progressBar.setVisibility(View.GONE);
                                     }
                                 });
                     }
@@ -142,6 +163,29 @@ public class ScannerActivity extends AppCompatActivity {
 
         //bind to lifecycle:
         CameraX.bindToLifecycle((LifecycleOwner)this, preview, imgCap);
+    }
+
+    private void addFoodItems(List<FirebaseVisionImageLabel> labels) {
+        Map<String, Integer> labelMap = labels
+                .stream()
+                .collect(Collectors.groupingBy(FirebaseVisionImageLabel::getText, Collectors.reducing(0, e -> 1, Integer::sum)));
+        List<FoodItem> foodItems = new ArrayList<>();
+        for(Map.Entry mapElement : labelMap.entrySet()) {
+            foodItems.add(new FoodItem((String)mapElement.getKey(), LocalDateTime.now().plusDays(1).toString(), (int)mapElement.getValue(), ""));
+        }
+        try {
+            db.foodItemDAO().insertAll(foodItems);
+            setResult(foodItems, 3); //create
+            Toast.makeText(getApplicationContext(), "Added food items to the fridge.", Toast.LENGTH_LONG).show();
+        } catch (Exception ex) {
+            Log.e("Add Shop failed", ex.getMessage());
+        }
+
+    }
+
+    private void setResult(List<FoodItem> food, int flag) {
+        setResult(flag, new Intent().putExtra("food_items", (Serializable) food));
+        finish();
     }
 
     private void updateTransform(){
