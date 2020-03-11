@@ -33,6 +33,9 @@ import android.widget.Toast;
 import com.example.refresh.database.AppDatabase;
 import com.example.refresh.database.model.FoodItem;
 import com.example.refresh.database.model.ShopItem;
+import com.example.refresh.service.FirebaseImageLabelService;
+import com.example.refresh.service.FirebaseProcessImageCallback;
+import com.example.refresh.service.ImageLabelService;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -52,12 +55,12 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-public class ScannerActivity extends AppCompatActivity {
+public class ScannerActivity extends AppCompatActivity implements FirebaseProcessImageCallback {
 
     private int REQUEST_CODE_PERMISSIONS = 101;
     private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"};
     private TextureView textureView;
-    private FirebaseVisionImageLabeler labeler;
+    private ImageLabelService imageLabelService;
     private FloatingActionButton imageCap;
     private ProgressBar progressBar;
     private AppDatabase db;
@@ -70,21 +73,8 @@ public class ScannerActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressbar);
         db = AppDatabase.getAppDatabase(ScannerActivity.this);
 
-        FirebaseVisionCloudImageLabelerOptions options = new FirebaseVisionCloudImageLabelerOptions.Builder()
-                                                        .setConfidenceThreshold(0.85f)
-                                                        .build();
-        labeler = FirebaseVision.getInstance()
-                .getCloudImageLabeler(options);
-
-
-        /*
-        FirebaseVisionOnDeviceImageLabelerOptions options = new FirebaseVisionOnDeviceImageLabelerOptions.Builder()
-                .setConfidenceThreshold(0.85f)
-                .build();
-        labeler = FirebaseVision.getInstance()
-                .getOnDeviceImageLabeler(options);
-
-         */
+        //Determine use cloud api or on device
+        imageLabelService = new FirebaseImageLabelService(false, this);
 
         textureView = findViewById(R.id.view_finder);
 
@@ -135,20 +125,7 @@ public class ScannerActivity extends AppCompatActivity {
                     public void onImageSaved(@NonNull File file) {
                         progressBar.setVisibility(View.VISIBLE);
                         Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
-                        FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
-                        labeler.processImage(image)
-                                .addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionImageLabel>>() {
-                                    @Override
-                                    public void onSuccess(List<FirebaseVisionImageLabel> labels) {
-                                        addFoodItems(labels);
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        progressBar.setVisibility(View.GONE);
-                                    }
-                                });
+                        imageLabelService.processImage(bitmap);
                     }
 
                     @Override
@@ -244,5 +221,15 @@ public class ScannerActivity extends AppCompatActivity {
             }
         }
         return true;
+    }
+
+    @Override
+    public void onSuccess(List<FirebaseVisionImageLabel> labels) {
+        addFoodItems(labels);
+    }
+
+    @Override
+    public void onFailure(Exception e) {
+        progressBar.setVisibility(View.GONE);
     }
 }
