@@ -26,33 +26,21 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import com.example.refresh.database.AppDatabase;
 import com.example.refresh.database.model.FoodItem;
-import com.example.refresh.database.model.ShopItem;
 import com.example.refresh.service.FirebaseImageLabelService;
 import com.example.refresh.service.FirebaseProcessImageCallback;
 import com.example.refresh.service.ImageLabelService;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.ml.vision.FirebaseVision;
-import com.google.firebase.ml.vision.common.FirebaseVisionImage;
-import com.google.firebase.ml.vision.label.FirebaseVisionCloudImageLabelerOptions;
 import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel;
-import com.google.firebase.ml.vision.label.FirebaseVisionImageLabeler;
-import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceImageLabelerOptions;
-
 import java.io.File;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 public class ScannerActivity extends AppCompatActivity implements FirebaseProcessImageCallback {
@@ -158,7 +146,7 @@ public class ScannerActivity extends AppCompatActivity implements FirebaseProces
             setResult(foodItems, 3); //create
             Toast.makeText(getApplicationContext(), "Added food items to the fridge.", Toast.LENGTH_LONG).show();
         } catch (Exception ex) {
-            Log.e("Add Shop failed", ex.getMessage());
+            Log.e("Add Food failed", ex.getMessage());
         }
 
     }
