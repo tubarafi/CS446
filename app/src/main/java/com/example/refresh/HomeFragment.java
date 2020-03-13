@@ -1,14 +1,8 @@
 package com.example.refresh;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.refresh.database.model.FoodItem;
-import com.example.refresh.service.ImageLabelService;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.lang.ref.WeakReference;
@@ -56,7 +49,7 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
         FloatingActionButton cameraFab = rootView.findViewById(R.id.fab_camera);
         FloatingActionButton imageFab = rootView.findViewById(R.id.fab_image);
 
-
+        //TODO: may change to fab menu open or close instead of showing all fabs
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
