@@ -1,8 +1,14 @@
 package com.example.refresh;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.refresh.database.model.FoodItem;
+import com.example.refresh.service.ImageLabelService;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.lang.ref.WeakReference;
@@ -28,7 +35,6 @@ import com.example.refresh.database.AppDatabase;
 public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFoodItemListener {
 
     private List<FoodItem> foodItemList = new ArrayList<>();
-
     private TextView foodItemListEmptyTextView;
     private RecyclerView recyclerView;
     private FoodItemListAdapter foodItemListAdapter;
@@ -48,6 +54,9 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         FloatingActionButton fab = rootView.findViewById(R.id.fab);
         FloatingActionButton cameraFab = rootView.findViewById(R.id.fab_camera);
+        FloatingActionButton imageFab = rootView.findViewById(R.id.fab_image);
+
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,6 +70,14 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
                 startActivityForResult(new Intent(getActivity(), ScannerActivity.class), 100);
             }
         });
+
+        imageFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivityForResult(new Intent(getActivity(), GalleryActivity.class), 100);
+            }
+        });
+
         new RetrieveTask(this).execute();
         return rootView;
     }
