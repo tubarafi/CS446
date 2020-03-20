@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,6 +23,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.example.refresh.adapter.FoodItemListAdapter;
 import com.example.refresh.database.AppDatabase;
@@ -32,12 +35,15 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
     private RecyclerView recyclerView;
     private FoodItemListAdapter foodItemListAdapter;
     private AppDatabase db;
+    private Boolean isFabOpen = false;
+    private FloatingActionButton fab, cameraFab, imageFab, manualFab;
+    private Animation fab_open, fab_close, rotate_forward, rotate_backward;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Food Item List");
+        Objects.requireNonNull(((AppCompatActivity) Objects.requireNonNull(getActivity())).getSupportActionBar()).setTitle("Food Item List");
         db = AppDatabase.getAppDatabase(getContext());
         foodItemListEmptyTextView = rootView.findViewById(R.id.emptyListTextView);
         recyclerView = rootView.findViewById(R.id.recyclerView);
@@ -45,36 +51,55 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
         foodItemListAdapter = new FoodItemListAdapter(getActivity(), foodItemList, this);
         recyclerView.setAdapter(foodItemListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        FloatingActionButton fab = rootView.findViewById(R.id.fab);
-        FloatingActionButton cameraFab = rootView.findViewById(R.id.fab_camera);
-        FloatingActionButton imageFab = rootView.findViewById(R.id.fab_image);
+        fab = rootView.findViewById(R.id.fab);
+        cameraFab = rootView.findViewById(R.id.fab_camera);
+        imageFab = rootView.findViewById(R.id.fab_image);
+        manualFab = rootView.findViewById(R.id.fab_manual);
 
-        //TODO: may change to fab menu open or close instead of showing all fabs
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivityForResult(new Intent(getActivity(), AddFoodItemActivity.class), 100);
-            }
-        });
+        fab_open = AnimationUtils.loadAnimation(getContext(), R.anim.fab_open);
+        fab_close = AnimationUtils.loadAnimation(getContext(), R.anim.fab_close);
+        rotate_forward = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_forward);
+        rotate_backward = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_backward);
 
-        cameraFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivityForResult(new Intent(getActivity(), ScannerActivity.class), 100);
-            }
+        manualFab.setOnClickListener(view -> {
+            AnimateFab();
+            startActivityForResult(new Intent(getActivity(), AddFoodItemActivity.class), 100);
         });
-
-        imageFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivityForResult(new Intent(getActivity(), GalleryActivity.class), 100);
-            }
+        cameraFab.setOnClickListener(view -> {
+            startActivityForResult(new Intent(getActivity(), ScannerActivity.class), 100);
+            AnimateFab();
         });
+        imageFab.setOnClickListener(view -> {
+            startActivityForResult(new Intent(getActivity(), GalleryActivity.class), 100);
+            AnimateFab();
+        });
+        fab.setOnClickListener(view -> AnimateFab());
 
         new RetrieveTask(this).execute();
         return rootView;
     }
 
+    private void AnimateFab() {
+        if (isFabOpen) {
+            fab.startAnimation(rotate_backward);
+            cameraFab.startAnimation(fab_close);
+            imageFab.startAnimation(fab_close);
+            manualFab.startAnimation(fab_close);
+            cameraFab.setClickable(false);
+            imageFab.setClickable(false);
+            manualFab.setClickable(false);
+            isFabOpen = false;
+        } else {
+            fab.startAnimation(rotate_forward);
+            cameraFab.startAnimation(fab_open);
+            imageFab.startAnimation(fab_open);
+            manualFab.startAnimation(fab_open);
+            cameraFab.setClickable(true);
+            imageFab.setClickable(true);
+            manualFab.setClickable(true);
+            isFabOpen = true;
+        }
+    }
 
     private static class RetrieveTask extends AsyncTask<Void, Void, List<FoodItem>> {
 
@@ -116,9 +141,8 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
                 if (pos != -1) {
                     foodItemList.set(pos, (FoodItem) data.getSerializableExtra("food_item"));
                 }
-            }
-            else if (resultCode == 3) {
-                foodItemList.addAll((List<FoodItem>) data.getSerializableExtra("food_items"));
+            } else if (resultCode == 3) {
+                foodItemList.addAll((List<FoodItem>) Objects.requireNonNull(data.getSerializableExtra("food_items")));
             }
             listVisibility();
         }

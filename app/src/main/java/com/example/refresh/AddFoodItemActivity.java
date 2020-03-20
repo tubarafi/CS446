@@ -14,9 +14,7 @@ import android.os.SystemClock;
 import android.text.InputType;
 import android.text.format.DateUtils;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -29,6 +27,7 @@ import com.example.refresh.database.model.FoodItem;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 import java.util.TimeZone;
 
 public class AddFoodItemActivity extends AppCompatActivity {
@@ -59,7 +58,7 @@ public class AddFoodItemActivity extends AppCompatActivity {
         pos = getIntent().getIntExtra("position", -1);
 
         if ((foodItem = (FoodItem) getIntent().getSerializableExtra("food_item")) != null) {
-            getSupportActionBar().setTitle("Update Food Item");
+            Objects.requireNonNull(getSupportActionBar()).setTitle("Update Food Item");
             update = true;
 
             createButton.setText("Update");
@@ -68,77 +67,62 @@ public class AddFoodItemActivity extends AppCompatActivity {
             remindDateEditText.setText(foodItem.getRemindMeOnDate());
             noteEditText.setText(foodItem.getNote());
         } else {
-            getSupportActionBar().setTitle("Create Food Item");
+            Objects.requireNonNull(getSupportActionBar()).setTitle("Create Food Item");
         }
 
-        remindDateEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dateSelected = true;
-                final Calendar cldr = Calendar.getInstance();
-                int day = cldr.get(Calendar.DAY_OF_MONTH);
-                int month = cldr.get(Calendar.MONTH);
-                int year = cldr.get(Calendar.YEAR);
-                picker = new DatePickerDialog(AddFoodItemActivity.this, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        remindDateEditText.setText((monthOfYear + 1) + "/" + dayOfMonth + "/" + year);
-                    }
-                }, year, month, day);
-                picker.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
-                picker.show();
-            }
+        remindDateEditText.setOnClickListener(view -> {
+            dateSelected = true;
+            final Calendar cldr = Calendar.getInstance();
+            int day = cldr.get(Calendar.DAY_OF_MONTH);
+            int month = cldr.get(Calendar.MONTH);
+            int year = cldr.get(Calendar.YEAR);
+            picker = new DatePickerDialog(AddFoodItemActivity.this, (view1, year1, monthOfYear, dayOfMonth) -> remindDateEditText.setText((monthOfYear + 1) + "/" + dayOfMonth + "/" + year1), year, month, day);
+            picker.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+            picker.show();
         });
 
-        createButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Context context = getApplicationContext();
-                String itemName = nameEditText.getText().toString();
-                String itemQuantity = quantityEditText.getText().toString();
-                if (itemName.equals("")) {
-                    Toast.makeText(context, "Please enter an item name.", Toast.LENGTH_LONG).show();
-                } else if (itemQuantity.equals("")) {
-                    Toast.makeText(context, "Please enter a quantity.", Toast.LENGTH_LONG).show();
-                } else if (!dateSelected) {
-                    Toast.makeText(context, "Please enter a date.", Toast.LENGTH_LONG).show();
+        createButton.setOnClickListener(view -> {
+            Context context = getApplicationContext();
+            String itemName = nameEditText.getText().toString();
+            String itemQuantity = quantityEditText.getText().toString();
+            if (itemName.equals("")) {
+                Toast.makeText(context, "Please enter an item name.", Toast.LENGTH_LONG).show();
+            } else if (itemQuantity.equals("")) {
+                Toast.makeText(context, "Please enter a quantity.", Toast.LENGTH_LONG).show();
+            } else if (!dateSelected) {
+                Toast.makeText(context, "Please enter a date.", Toast.LENGTH_LONG).show();
+            } else {
+                if (update) {
+                    foodItem.setName(nameEditText.getText().toString());
+                    foodItem.setQuantity(Integer.parseInt(quantityEditText.getText().toString()));
+                    foodItem.setRemindMeOnDate(remindDateEditText.getText().toString());
+                    foodItem.setNote(noteEditText.getText().toString());
+
+                    try {
+                        db.foodItemDAO().update(foodItem);
+                        setResult(foodItem, 2); // update
+                        Toast.makeText(context, "Updated " + foodItem.getName() + ".", Toast.LENGTH_LONG).show();
+
+                    } catch (Exception ex) {
+                        Log.e("Update Food failed", ex.getMessage() != null ? ex.getMessage() : "");
+                    }
                 } else {
-                    if (update) {
-                        foodItem.setName(nameEditText.getText().toString());
-                        foodItem.setQuantity(Integer.valueOf(quantityEditText.getText().toString()));
-                        foodItem.setRemindMeOnDate(remindDateEditText.getText().toString());
-                        foodItem.setNote(noteEditText.getText().toString());
+                    foodItem = new FoodItem(nameEditText.getText().toString(), remindDateEditText.getText().toString(), Integer.parseInt(quantityEditText.getText().toString()), noteEditText.getText().toString());
+                    try {
+                        db.foodItemDAO().insert(foodItem);
+                        setResult(foodItem, 1); //create
+                        String name = foodItem.getName();
+                        Toast.makeText(context, "Added " + foodItem.getName() + " to fridge.", Toast.LENGTH_LONG).show();
 
-                        try {
-                            db.foodItemDAO().update(foodItem);
-                            setResult(foodItem, 2); // update
-                            Toast.makeText(context, "Updated " + foodItem.getName() + ".", Toast.LENGTH_LONG).show();
-
-                        } catch (Exception ex) {
-                            Log.e("Update Food failed", ex.getMessage());
-                        }
-                    } else {
-                        foodItem = new FoodItem(nameEditText.getText().toString(), remindDateEditText.getText().toString(), Integer.valueOf(quantityEditText.getText().toString()), noteEditText.getText().toString());
-                        try {
-                            db.foodItemDAO().insert(foodItem);
-                            setResult(foodItem, 1); //create
-                            Toast.makeText(context, "Added " + foodItem.getName() + " to fridge.", Toast.LENGTH_LONG).show();
-
-                            scheduleNotification(context, foodItem);
-                        } catch (Exception ex) {
-                            Log.e("Add Food failed", ex.getMessage());
-                        }
+                        scheduleNotification(context);
+                    } catch (Exception ex) {
+                        Log.e("Add Food failed", ex.getMessage() != null ? ex.getMessage() : "");
                     }
                 }
             }
         });
 
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        cancelButton.setOnClickListener(v -> finish());
     }
 
     private void setResult(FoodItem food, int flag) {
@@ -146,16 +130,18 @@ public class AddFoodItemActivity extends AppCompatActivity {
         finish();
     }
 
-    private void scheduleNotification(Context context, FoodItem foodItem) {
+    private void scheduleNotification(Context context) {
         // Create notification channel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel("pls_work", "ReFresh", importance);
+            NotificationChannel channel = new NotificationChannel("remind_expiry", "ReFresh", importance);
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(channel);
+            }
         }
         // Create notification content
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(AddFoodItemActivity.this, "pls_work")
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(AddFoodItemActivity.this, "remind_expiry")
                 .setContentTitle("There's food expiring soon!")
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText("Use your " + foodItem.getName() + " by today! Check out some recipes now."))
@@ -181,6 +167,8 @@ public class AddFoodItemActivity extends AppCompatActivity {
 
         try {
             Date expiryDate = new SimpleDateFormat("MM/dd/yyyy").parse(foodItem.getRemindMeOnDate());
+            assert expiryDate != null;
+            assert alarmManager != null;
             if (DateUtils.isToday(expiryDate.getTime())) {
                 alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), alarmIntent);
             } else {
@@ -190,7 +178,7 @@ public class AddFoodItemActivity extends AppCompatActivity {
                 alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
             }
         } catch (Exception ex) {
-            Log.e("Date conversion for notification failed.", ex.getMessage());
+            Log.e("Date conversion for notification failed.", ex.getMessage() != null ? ex.getMessage() : "");
         }
     }
 }

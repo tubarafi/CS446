@@ -31,24 +31,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
-            new BottomNavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    Fragment selectedFragment = new HomeFragment();
+            item -> {
+                Fragment selectedFragment = new HomeFragment();
 
-                    switch (item.getItemId()) {
-                        case R.id.nav_recipe:
-                            selectedFragment = new RecipeFragment();
-                            break;
-                        case R.id.nav_shop:
-                            selectedFragment = new ShoppingFragment();
-                            break;
-                    }
-
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                            selectedFragment).commit();
-
-                    return true;
+                switch (item.getItemId()) {
+                    case R.id.nav_recipe:
+                        selectedFragment = new RecipeFragment();
+                        break;
+                    case R.id.nav_shop:
+                        selectedFragment = new ShoppingFragment();
+                        break;
                 }
+
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                        selectedFragment).commit();
+
+                return true;
             };
 }
