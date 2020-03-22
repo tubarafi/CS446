@@ -3,6 +3,7 @@
     <string name="bottom_nav_fridge">Fridge</string>
     <string name="bottom_nav_recipe">Recipes</string>
     <string name="bottom_nav_shop">Shopping List</string>
+    <string name="settings">Notification Settings</string>
     <string name="null_list_screen">Start by adding a new item!</string>
     <string name="null_recipe_screen">Nothing to cook with :(</string>
     <string name="form_item_name_field">Item Name</string>

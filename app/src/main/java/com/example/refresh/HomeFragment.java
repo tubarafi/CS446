@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -44,6 +47,7 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         Objects.requireNonNull(((AppCompatActivity) Objects.requireNonNull(getActivity())).getSupportActionBar()).setTitle("Food Item List");
+        this.setHasOptionsMenu(true);
         db = AppDatabase.getAppDatabase(getContext());
         foodItemListEmptyTextView = rootView.findViewById(R.id.emptyListTextView);
         recyclerView = rootView.findViewById(R.id.recyclerView);
@@ -77,6 +81,22 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
 
         new RetrieveTask(this).execute();
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.notification_settings, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.notification_setting) {
+            startActivityForResult(new Intent(getActivity(), AddFoodItemActivity.class), 100);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void AnimateFab() {
