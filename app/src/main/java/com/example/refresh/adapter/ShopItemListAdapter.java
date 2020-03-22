@@ -54,38 +54,20 @@ public class ShopItemListAdapter extends RecyclerView.Adapter<ShopItemListAdapte
         holder.shopNameTextView.setText(shopItem.getName());
         holder.quantityTextView.setText(String.valueOf(shopItem.getQuantity()));
 
-        holder.crossButtonImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-                alertDialogBuilder.setMessage("Are you sure you want to remove " + shopItem.getName() + " from your shopping list?");
-                alertDialogBuilder.setPositiveButton("Yes",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface arg0, int arg1) {
-                                deleteShopItem(itemPosition);
-                            }
-                        });
+        holder.crossButtonImageView.setOnClickListener(view -> {
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+            alertDialogBuilder.setMessage("Are you sure you want to remove " + shopItem.getName() + " from your shopping list?");
+            alertDialogBuilder.setPositiveButton("Yes",
+                    (arg0, arg1) -> deleteShopItem(itemPosition));
 
-                alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+            alertDialogBuilder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
 
-                AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();
-            }
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
         });
 
 
-        holder.editButtonImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                shoppingFragment.startActivityForResult(new Intent(context, AddShopItemActivity.class).putExtra("shop_item", shopItemList.get(itemPosition)).putExtra("position", itemPosition), 100);
-            }
-        });
+        holder.editButtonImageView.setOnClickListener(view -> shoppingFragment.startActivityForResult(new Intent(context, AddShopItemActivity.class).putExtra("shop_item", shopItemList.get(itemPosition)).putExtra("position", itemPosition), 100));
 
 
     }
@@ -97,9 +79,10 @@ public class ShopItemListAdapter extends RecyclerView.Adapter<ShopItemListAdapte
             db.shopItemDAO().delete(shopItem);
             shopItemList.remove(position);
             notifyDataSetChanged();
+            shoppingFragment.listVisibility();
             Toast.makeText(context, shopItemName + " has been removed.", Toast.LENGTH_LONG).show();
         } catch (Exception ex) {
-            Log.e("Delete Shop", ex.getMessage());
+            Log.e("Delete Shop", ex.getMessage() != null ? ex.getMessage() : "");
             Toast.makeText(context, "Error: Failed to remove " + shopItemName + ".", Toast.LENGTH_LONG).show();
         }
     }
@@ -111,7 +94,7 @@ public class ShopItemListAdapter extends RecyclerView.Adapter<ShopItemListAdapte
         ImageView editButtonImageView;
         OnShopItemListener onShopItemListener;
 
-        public ListViewHolder(View itemView, OnShopItemListener onShopItemListener) {
+        ListViewHolder(View itemView, OnShopItemListener onShopItemListener) {
             super(itemView);
             this.onShopItemListener = onShopItemListener;
             itemView.setOnClickListener(this);

@@ -44,47 +44,39 @@ public class AddShopItemActivity extends AppCompatActivity {
         } else {
             getSupportActionBar().setTitle("Create Shop Item");
         }
-        createButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Context context = getApplicationContext();
-                String itemName = nameEditText.getText().toString();
-                String itemQuantity = quantityEditText.getText().toString();
-                if (itemName.equals("")) {
-                    Toast.makeText(context, "Please enter an item name.", Toast.LENGTH_LONG).show();
-                } else if (itemQuantity.equals("")) {
-                    Toast.makeText(context, "Please enter a quantity.", Toast.LENGTH_LONG).show();
+        createButton.setOnClickListener(view -> {
+            Context context = getApplicationContext();
+            String itemName = nameEditText.getText().toString();
+            String itemQuantity = quantityEditText.getText().toString();
+            if (itemName.equals("")) {
+                Toast.makeText(context, "Please enter an item name.", Toast.LENGTH_LONG).show();
+            } else if (itemQuantity.equals("")) {
+                Toast.makeText(context, "Please enter a quantity.", Toast.LENGTH_LONG).show();
+            } else {
+                if (update) {
+                    shopItem.setName(nameEditText.getText().toString());
+                    shopItem.setQuantity(Integer.parseInt(quantityEditText.getText().toString()));
+                    try {
+                        db.shopItemDAO().update(shopItem);
+                        setResult(shopItem, 2); // update
+                        Toast.makeText(context, "Updated " + shopItem.getName() + ".", Toast.LENGTH_LONG).show();
+                    } catch (Exception ex) {
+                        Log.e("Update Shop failed", ex.getMessage() != null ? ex.getMessage() : "");
+                    }
                 } else {
-                    if (update) {
-                        shopItem.setName(nameEditText.getText().toString());
-                        shopItem.setQuantity(Integer.valueOf(quantityEditText.getText().toString()));
-                        try {
-                            db.shopItemDAO().update(shopItem);
-                            setResult(shopItem, 2); // update
-                            Toast.makeText(context, "Updated " + shopItem.getName() + ".", Toast.LENGTH_LONG).show();
-                        } catch (Exception ex) {
-                            Log.e("Update Shop failed", ex.getMessage());
-                        }
-                    } else {
-                        shopItem = new ShopItem(nameEditText.getText().toString(), Integer.valueOf(quantityEditText.getText().toString()));
-                        try {
-                            db.shopItemDAO().insert(shopItem);
-                            setResult(shopItem, 1); //create
-                            Toast.makeText(context, "Added " + shopItem.getName() + " to shopping list.", Toast.LENGTH_LONG).show();
-                        } catch (Exception ex) {
-                            Log.e("Add Shop failed", ex.getMessage());
-                        }
+                    shopItem = new ShopItem(nameEditText.getText().toString(), Integer.parseInt(quantityEditText.getText().toString()));
+                    try {
+                        db.shopItemDAO().insert(shopItem);
+                        setResult(shopItem, 1); //create
+                        Toast.makeText(context, "Added " + shopItem.getName() + " to shopping list.", Toast.LENGTH_LONG).show();
+                    } catch (Exception ex) {
+                        Log.e("Add Shop failed", ex.getMessage() != null ? ex.getMessage() : "");
                     }
                 }
             }
         });
 
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        cancelButton.setOnClickListener(view -> finish());
     }
 
     private void setResult(ShopItem shop, int flag) {

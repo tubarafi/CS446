@@ -117,7 +117,7 @@ public class GalleryActivity extends AppCompatActivity implements FirebaseProces
             setResult(foodItems, 3); //create
             Toast.makeText(getApplicationContext(), "Added food items to the fridge.", Toast.LENGTH_LONG).show();
         } catch (Exception ex) {
-            Log.e("Add Food failed", ex.getMessage());
+            Log.e("Add Food failed", ex.getMessage() != null ? ex.getMessage() : "");
         }
 
     }

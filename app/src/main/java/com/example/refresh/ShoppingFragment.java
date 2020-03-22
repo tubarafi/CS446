@@ -27,6 +27,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ShoppingFragment extends Fragment implements ShopItemListAdapter.OnShopItemListener {
 
@@ -41,7 +42,7 @@ public class ShoppingFragment extends Fragment implements ShopItemListAdapter.On
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_shopping, container, false);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Shopping List");
+        ((AppCompatActivity) Objects.requireNonNull(getActivity())).getSupportActionBar().setTitle("Shopping List");
         db = AppDatabase.getAppDatabase(getContext());
         shopItemListEmptyTextView = rootView.findViewById(R.id.emptyListTextView);
         recyclerView = rootView.findViewById(R.id.recyclerView);
@@ -50,12 +51,7 @@ public class ShoppingFragment extends Fragment implements ShopItemListAdapter.On
         recyclerView.setAdapter(shopItemListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         FloatingActionButton fab = rootView.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivityForResult(new Intent(getActivity(), AddShopItemActivity.class), 100);
-            }
-        });
+        fab.setOnClickListener(view -> startActivityForResult(new Intent(getActivity(), AddShopItemActivity.class), 100));
         new ShoppingFragment.RetrieveTask(this).execute();
         return rootView;
     }
@@ -79,12 +75,16 @@ public class ShoppingFragment extends Fragment implements ShopItemListAdapter.On
 
         @Override
         protected void onPostExecute(List<ShopItem> items) {
-            if (items != null && items.size() > 0) {
-                c.get().shopItemList.clear();
-                c.get().shopItemList.addAll(items);
-                // hides empty text view
-                c.get().shopItemListEmptyTextView.setVisibility(View.GONE);
-                c.get().shopItemListAdapter.notifyDataSetChanged();
+            if (items != null) {
+                if (items.size() > 0) {
+                    c.get().shopItemList.clear();
+                    c.get().shopItemList.addAll(items);
+                    // hides empty text view
+                    c.get().shopItemListEmptyTextView.setVisibility(View.GONE);
+                    c.get().shopItemListAdapter.notifyDataSetChanged();
+                } else {
+                    c.get().shopItemListEmptyTextView.setVisibility(View.VISIBLE);
+                }
             }
         }
     }
@@ -105,7 +105,7 @@ public class ShoppingFragment extends Fragment implements ShopItemListAdapter.On
         }
     }
 
-    private void listVisibility() {
+    public void listVisibility() {
         int emptyMsgVisibility = View.GONE;
         if (shopItemList.size() == 0) { // no item to display
             if (shopItemListEmptyTextView.getVisibility() == View.GONE)
@@ -123,28 +123,20 @@ public class ShoppingFragment extends Fragment implements ShopItemListAdapter.On
         ShopItem item = shopItemList.get(position);
         alertDialogBuilder.setMessage("Are you sure you want to move " + item.getName() + " to the fridge?");
         alertDialogBuilder.setPositiveButton("Yes",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        ShopItem item = shopItemList.get(position);
-                        FoodItem foodItem = new FoodItem(item.getName(), "", item.getQuantity(), "");
-                        try {
-                            db.foodItemDAO().insert(foodItem);
-                            db.shopItemDAO().delete(item);
-                            shopItemList.remove(position);
-                            shopItemListAdapter.notifyDataSetChanged();
-                        } catch (Exception ex) {
-                            Log.e("Move Shop item failed", ex.getMessage());
-                        }
+                (arg0, arg1) -> {
+                    ShopItem item1 = shopItemList.get(position);
+                    FoodItem foodItem = new FoodItem(item1.getName(), "", item1.getQuantity(), "");
+                    try {
+                        db.foodItemDAO().insert(foodItem);
+                        db.shopItemDAO().delete(item1);
+                        shopItemList.remove(position);
+                        shopItemListAdapter.notifyDataSetChanged();
+                    } catch (Exception ex) {
+                        Log.e("Move Shop item failed", ex.getMessage() != null ? ex.getMessage() : "");
                     }
                 });
 
-        alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        alertDialogBuilder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();

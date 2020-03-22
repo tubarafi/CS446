@@ -87,16 +87,13 @@ public class ScannerActivity extends AppCompatActivity implements FirebaseProces
         Preview preview = new Preview(pConfig);
 
         preview.setOnPreviewOutputUpdateListener(
-                new Preview.OnPreviewOutputUpdateListener() {
-                    @Override
-                    public void onUpdated(Preview.PreviewOutput output){
-                        ViewGroup parent = (ViewGroup) textureView.getParent();
-                        parent.removeView(textureView);
-                        parent.addView(textureView, 0);
+                output -> {
+                    ViewGroup parent = (ViewGroup) textureView.getParent();
+                    parent.removeView(textureView);
+                    parent.addView(textureView, 0);
 
-                        textureView.setSurfaceTexture(output.getSurfaceTexture());
-                        updateTransform();
-                    }
+                    textureView.setSurfaceTexture(output.getSurfaceTexture());
+                    updateTransform();
                 });
 
 
@@ -104,33 +101,30 @@ public class ScannerActivity extends AppCompatActivity implements FirebaseProces
                 .setTargetRotation(getWindowManager().getDefaultDisplay().getRotation()).build();
         final ImageCapture imgCap = new ImageCapture(imageCaptureConfig);
 
-        imageCap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                File file = new File(Environment.getExternalStorageDirectory() + "/" + System.currentTimeMillis() + ".png");
-                imgCap.takePicture(file,  new ImageCapture.OnImageSavedListener() {
-                    @Override
-                    public void onImageSaved(@NonNull File file) {
-                        progressBar.setVisibility(View.VISIBLE);
-                        Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
-                        imageLabelService.processImage(bitmap);
-                    }
+        imageCap.setOnClickListener(view -> {
+            File file = new File(Environment.getExternalStorageDirectory() + "/" + System.currentTimeMillis() + ".png");
+            imgCap.takePicture(file, new ImageCapture.OnImageSavedListener() {
+                @Override
+                public void onImageSaved(@NonNull File file) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
+                    imageLabelService.processImage(bitmap);
+                }
 
-                    @Override
-                    public void onError(@NonNull ImageCapture.UseCaseError useCaseError, @NonNull String message, @Nullable Throwable cause) {
-                        String msg = "Pic capture failed : " + message;
-                        Toast.makeText(getBaseContext(), msg,Toast.LENGTH_LONG).show();
-                        if(cause != null){
-                            cause.printStackTrace();
-                        }
+                @Override
+                public void onError(@NonNull ImageCapture.UseCaseError useCaseError, @NonNull String message, @Nullable Throwable cause) {
+                    String msg = "Pic capture failed : " + message;
+                    Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
+                    if (cause != null) {
+                        cause.printStackTrace();
                     }
-                });
+                }
+            });
 
-            }
         });
 
-        //bind to lifecycle:
-        CameraX.bindToLifecycle((LifecycleOwner)this, preview, imgCap);
+        // bind to lifecycle:
+        CameraX.bindToLifecycle(this, preview, imgCap);
     }
 
     private void addFoodItems(List<FirebaseVisionImageLabel> labels) {
@@ -146,7 +140,7 @@ public class ScannerActivity extends AppCompatActivity implements FirebaseProces
             setResult(foodItems, 3); //create
             Toast.makeText(getApplicationContext(), "Added food items to the fridge.", Toast.LENGTH_LONG).show();
         } catch (Exception ex) {
-            Log.e("Add Food failed", ex.getMessage());
+            Log.e("Add Food failed", ex.getMessage() != null ? ex.getMessage() : "");
         }
 
     }

@@ -60,38 +60,20 @@ public class FoodItemListAdapter extends RecyclerView.Adapter<FoodItemListAdapte
             holder.remindDateTextView.setText(foodItem.getRemindMeOnDate());
         }
 
-        holder.crossButtonImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-                alertDialogBuilder.setMessage("Are you sure you want to remove " + foodItem.getName() + " from your fridge?");
-                alertDialogBuilder.setPositiveButton("Yes",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface arg0, int arg1) {
-                                deleteFoodItem(itemPosition);
-                            }
-                        });
+        holder.crossButtonImageView.setOnClickListener(view -> {
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+            alertDialogBuilder.setMessage("Are you sure you want to remove " + foodItem.getName() + " from your fridge?");
+            alertDialogBuilder.setPositiveButton("Yes",
+                    (arg0, arg1) -> deleteFoodItem(itemPosition));
 
-                alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+            alertDialogBuilder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
 
-                AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();
-            }
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
         });
 
 
-        holder.editButtonImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                homeFragment.startActivityForResult(new Intent(context, AddFoodItemActivity.class).putExtra("food_item", foodItemList.get(itemPosition)).putExtra("position", itemPosition), 100);
-            }
-        });
+        holder.editButtonImageView.setOnClickListener(view -> homeFragment.startActivityForResult(new Intent(context, AddFoodItemActivity.class).putExtra("food_item", foodItemList.get(itemPosition)).putExtra("position", itemPosition), 100));
 
 
     }
@@ -102,10 +84,11 @@ public class FoodItemListAdapter extends RecyclerView.Adapter<FoodItemListAdapte
         try {
             db.foodItemDAO().delete(foodItem);
             foodItemList.remove(position);
+            homeFragment.listVisibility();
             notifyDataSetChanged();
             Toast.makeText(context, foodName + " has been removed.", Toast.LENGTH_LONG).show();
         } catch (Exception ex) {
-            Log.e("Delete Food", ex.getMessage());
+            Log.e("Delete Food", ex.getMessage() != null ? ex.getMessage() : "");
             Toast.makeText(context, "Error: Failed to remove " + foodName + ".", Toast.LENGTH_LONG).show();
         }
     }
@@ -119,7 +102,7 @@ public class FoodItemListAdapter extends RecyclerView.Adapter<FoodItemListAdapte
         ImageView editButtonImageView;
         private OnFoodItemListener onFoodItemListener;
 
-        public ListViewHolder(View itemView, OnFoodItemListener onFoodItemListener) {
+        ListViewHolder(View itemView, OnFoodItemListener onFoodItemListener) {
             super(itemView);
             this.onFoodItemListener = onFoodItemListener;
             itemView.setOnClickListener(this);

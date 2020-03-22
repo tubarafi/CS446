@@ -3,5 +3,16 @@
     <string name="bottom_nav_fridge">Fridge</string>
     <string name="bottom_nav_recipe">Recipes</string>
     <string name="bottom_nav_shop">Shopping List</string>
+    <string name="null_list_screen">Start by adding a new item!</string>
     <string name="null_recipe_screen">Nothing to cook with :(</string>
+    <string name="form_item_name_field">Item Name</string>
+    <string name="form_quantity_field">Quantity</string>
+    <string name="form_date_field">Expiry Date</string>
+    <string name="form_notes_field">Notes</string>
+    <string name="create_button">Create</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="edit_button">Edit</string>
+    <string name="delete_button">Delete</string>
+    <string name="item_quantity">Quantity: </string>
+    <string name="item_reminder">Remind me on: </string>
 </resources>

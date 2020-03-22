@@ -89,7 +89,7 @@ public class AddFoodItemActivity extends AppCompatActivity {
                 Toast.makeText(context, "Please enter an item name.", Toast.LENGTH_LONG).show();
             } else if (itemQuantity.equals("")) {
                 Toast.makeText(context, "Please enter a quantity.", Toast.LENGTH_LONG).show();
-            } else if (!dateSelected) {
+            } else if (!dateSelected && !update) {
                 Toast.makeText(context, "Please enter a date.", Toast.LENGTH_LONG).show();
             } else {
                 if (update) {

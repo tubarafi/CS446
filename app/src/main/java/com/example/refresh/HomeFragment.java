@@ -120,12 +120,16 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
 
         @Override
         protected void onPostExecute(List<FoodItem> items) {
-            if (items != null && items.size() > 0) {
-                c.get().foodItemList.clear();
-                c.get().foodItemList.addAll(items);
-                // hides empty text view
-                c.get().foodItemListEmptyTextView.setVisibility(View.GONE);
-                c.get().foodItemListAdapter.notifyDataSetChanged();
+            if (items != null) {
+                if (items.size() > 0) {
+                    c.get().foodItemList.clear();
+                    c.get().foodItemList.addAll(items);
+                    // hides empty text view
+                    c.get().foodItemListEmptyTextView.setVisibility(View.GONE);
+                    c.get().foodItemListAdapter.notifyDataSetChanged();
+                } else {
+                    c.get().foodItemListEmptyTextView.setVisibility(View.VISIBLE);
+                }
             }
         }
     }
@@ -148,7 +152,7 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
         }
     }
 
-    private void listVisibility() {
+    public void listVisibility() {
         int emptyMsgVisibility = View.GONE;
         if (foodItemList.size() == 0) { // no item to display
             if (foodItemListEmptyTextView.getVisibility() == View.GONE)
