@@ -1,15 +1,20 @@
 package com.example.refresh;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +31,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
@@ -119,27 +125,74 @@ public class ShoppingFragment extends Fragment implements ShopItemListAdapter.On
     @Override
     public void onShopItemClick(int pos) {
         final int position = pos;
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
-        ShopItem item = shopItemList.get(position);
-        alertDialogBuilder.setMessage("Are you sure you want to move " + item.getName() + " to the fridge?");
-        alertDialogBuilder.setPositiveButton("Yes",
-                (arg0, arg1) -> {
-                    ShopItem item1 = shopItemList.get(position);
-                    FoodItem foodItem = new FoodItem(item1.getName(), "", item1.getQuantity(), "");
-                    try {
-                        db.foodItemDAO().insert(foodItem);
-                        db.shopItemDAO().delete(item1);
-                        shopItemList.remove(position);
-                        shopItemListAdapter.notifyDataSetChanged();
-                    } catch (Exception ex) {
-                        Log.e("Move Shop item failed", ex.getMessage() != null ? ex.getMessage() : "");
-                    }
-                });
 
-        alertDialogBuilder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
+        ShopItem item = shopItemList.get(position);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+        View view = getLayoutInflater().inflate(R.layout.dialog_shop_to_fridge, null);
+        alertDialogBuilder.setView(view);
+        alertDialogBuilder.setMessage("Move " + item.getName() + " to the fridge?");
+
+        EditText remindDateEditText = view.findViewById(R.id.shopingEditText);
+        remindDateEditText.setInputType(InputType.TYPE_NULL);
+
+        alertDialogBuilder.setPositiveButton("OK", null);
+        alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        });
 
         AlertDialog alertDialog = alertDialogBuilder.create();
+
+
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+
+                Button button = ((AlertDialog) alertDialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        ShopItem item1 = shopItemList.get(position);
+
+                        if (remindDateEditText.getText().toString().isEmpty()) {
+                            Toast.makeText(getContext(), "Please enter a date.", Toast.LENGTH_LONG).show();
+                        } else {
+                            FoodItem foodItem = new FoodItem(item1.getName(), remindDateEditText.getText().toString(), item1.getQuantity(), "");
+                            try {
+                                db.foodItemDAO().insert(foodItem);
+                                db.shopItemDAO().delete(item1);
+                                shopItemList.remove(position);
+                                shopItemListAdapter.notifyDataSetChanged();
+                                alertDialog.dismiss();
+                            } catch (Exception ex) {
+                                Log.e("Move Shop item failed", ex.getMessage() != null ? ex.getMessage() : "");
+                            }
+                        }
+
+                    }
+                });
+            }
+        });
+
         alertDialog.show();
+
+        remindDateEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Calendar cldr = Calendar.getInstance();
+                int day = cldr.get(Calendar.DAY_OF_MONTH);
+                int month = cldr.get(Calendar.MONTH);
+                int year = cldr.get(Calendar.YEAR);
+                DatePickerDialog picker = new DatePickerDialog(getContext(), (view1, year1, monthOfYear, dayOfMonth) -> remindDateEditText.setText((monthOfYear + 1) + "/" + dayOfMonth + "/" + year1), year, month, day);
+                picker.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+                picker.show();
+            }
+        });
     }
 
 
