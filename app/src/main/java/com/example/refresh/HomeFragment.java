@@ -92,7 +92,7 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.notification_setting) {
-            startActivityForResult(new Intent(getActivity(), AddFoodItemActivity.class), 100);
+            startActivityForResult(new Intent(getActivity(), NotificationSettingsActivity.class), 100);
             return true;
         }
 

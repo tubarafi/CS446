@@ -23,6 +23,7 @@
         <activity android:name=".ScannerActivity" />
         <activity android:name=".AddShopItemActivity" />
         <activity android:name=".AddFoodItemActivity" />
+        <activity android:name=".NotificationSettingsActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
