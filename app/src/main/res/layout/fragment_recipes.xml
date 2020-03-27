@@ -7,7 +7,8 @@
 
     <include
         android:id="@+id/include"
-        layout="@layout/content_main" />
+        layout="@layout/content_main"
+        android:layout_height="618dp" />
 
     <TextView
         android:id="@+id/emptyRecipeListTextView"
@@ -18,5 +19,22 @@
         android:textSize="30sp"
         app:layout_anchor="@+id/include"
         app:layout_anchorGravity="center" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_goBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|left"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="12dp"
+        android:clickable="true"
+        app:srcCompat="?attr/actionModeCloseDrawable" />
+
+    <FrameLayout
+        android:id="@+id/homeFrame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

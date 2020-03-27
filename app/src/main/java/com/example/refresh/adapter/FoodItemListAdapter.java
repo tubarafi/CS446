@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.example.refresh.AddFoodItemActivity;
@@ -30,6 +32,8 @@ public class FoodItemListAdapter extends RecyclerView.Adapter<FoodItemListAdapte
     private LayoutInflater layoutInflater;
     private HomeFragment homeFragment;
     private AppDatabase db;
+    private boolean showCheckbox;
+    public ArrayList<FoodItem> selectedIngredientList = new ArrayList<>();
 
     public FoodItemListAdapter(Context context, List<FoodItem> foodItemList, HomeFragment homeFragment) {
         db = AppDatabase.getAppDatabase(context);
@@ -75,7 +79,24 @@ public class FoodItemListAdapter extends RecyclerView.Adapter<FoodItemListAdapte
 
         holder.editButtonImageView.setOnClickListener(view -> homeFragment.startActivityForResult(new Intent(context, AddFoodItemActivity.class).putExtra("food_item", foodItemList.get(itemPosition)).putExtra("position", itemPosition), 100));
 
+        holder.selectIngredientBox.setOnClickListener(view -> {
+                if (holder.selectIngredientBox.isChecked()) {
+                    selectedIngredientList.add(foodItemList.get(itemPosition));
+                } else {
+                    selectedIngredientList.remove(foodItemList.get(itemPosition));
+                }
+        });
 
+        if (this.showCheckbox) {
+            holder.editButtonImageView.setVisibility(View.GONE);
+            holder.crossButtonImageView.setVisibility(View.GONE);
+            holder.selectIngredientBox.setVisibility(View.VISIBLE);
+        } else {
+            holder.editButtonImageView.setVisibility(View.VISIBLE);
+            holder.crossButtonImageView.setVisibility(View.VISIBLE);
+            holder.selectIngredientBox.setVisibility(View.GONE);
+            holder.selectIngredientBox.setChecked(false);
+        }
     }
 
     private void deleteFoodItem(int position) {
@@ -93,6 +114,14 @@ public class FoodItemListAdapter extends RecyclerView.Adapter<FoodItemListAdapte
         }
     }
 
+    public void toggleSelectIngredients(boolean isActive) {
+        if (isActive)
+            this.showCheckbox = true;
+        else
+            this.showCheckbox = false;
+        this.notifyDataSetChanged();
+    }
+
     public class ListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView foodNameTextView;
         TextView quantityTextView;
@@ -100,6 +129,7 @@ public class FoodItemListAdapter extends RecyclerView.Adapter<FoodItemListAdapte
         TextView remindDateTextView;
         ImageView crossButtonImageView;
         ImageView editButtonImageView;
+        CheckBox selectIngredientBox;
         private OnFoodItemListener onFoodItemListener;
 
         ListViewHolder(View itemView, OnFoodItemListener onFoodItemListener) {
@@ -112,6 +142,7 @@ public class FoodItemListAdapter extends RecyclerView.Adapter<FoodItemListAdapte
             remindDateTextView = itemView.findViewById(R.id.remindDateTextView);
             crossButtonImageView = itemView.findViewById(R.id.crossImageView);
             editButtonImageView = itemView.findViewById(R.id.editImageView);
+            selectIngredientBox = itemView.findViewById(R.id.selectIngredientBox);
         }
 
         @Override

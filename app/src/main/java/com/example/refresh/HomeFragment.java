@@ -11,16 +11,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.refresh.database.model.FoodItem;
+import com.example.refresh.util.fragmentCallbackListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.lang.ref.WeakReference;
@@ -39,8 +44,11 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
     private FoodItemListAdapter foodItemListAdapter;
     private AppDatabase db;
     private Boolean isFabOpen = false;
-    private FloatingActionButton fab, cameraFab, imageFab, manualFab;
+    private FloatingActionButton fab, cameraFab, imageFab, manualFab, recipeFab, cancelFab;
     private Animation fab_open, fab_close, rotate_forward, rotate_backward;
+    private Button genButton;
+    private boolean showingCheckboxes;
+    private fragmentCallbackListener callbackListener;
 
     @Nullable
     @Override
@@ -59,6 +67,9 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
         cameraFab = rootView.findViewById(R.id.fab_camera);
         imageFab = rootView.findViewById(R.id.fab_image);
         manualFab = rootView.findViewById(R.id.fab_manual);
+        recipeFab = rootView.findViewById(R.id.fab_generateRecipes);
+        cancelFab = rootView.findViewById(R.id.fab_cancelGeneration);
+        genButton = rootView.findViewById(R.id.genRecipesButton);
 
         fab_open = AnimationUtils.loadAnimation(getContext(), R.anim.fab_open);
         fab_close = AnimationUtils.loadAnimation(getContext(), R.anim.fab_close);
@@ -66,8 +77,8 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
         rotate_backward = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_backward);
 
         manualFab.setOnClickListener(view -> {
-            AnimateFab();
-            startActivityForResult(new Intent(getActivity(), AddFoodItemActivity.class), 100);
+                    AnimateFab();
+                    startActivityForResult(new Intent(getActivity(), AddFoodItemActivity.class), 100);
         });
         cameraFab.setOnClickListener(view -> {
             startActivityForResult(new Intent(getActivity(), ScannerActivity.class), 100);
@@ -78,6 +89,40 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
             AnimateFab();
         });
         fab.setOnClickListener(view -> AnimateFab());
+
+        recipeFab.setOnClickListener(view -> {
+                if (!showingCheckboxes) {
+                    genButton.setVisibility(View.VISIBLE);
+                    foodItemListAdapter.toggleSelectIngredients(true);
+                    showingCheckboxes = true;
+                    recipeFab.hide();
+                    cancelFab.show();
+                }
+        });
+
+        cancelFab.setOnClickListener(view -> {
+                if (showingCheckboxes) {
+                    genButton.setVisibility(View.GONE);
+                    foodItemListAdapter.toggleSelectIngredients(false);
+                    showingCheckboxes = false;
+                    cancelFab.hide();
+                    recipeFab.show();
+
+                }
+        });
+
+        genButton.setOnClickListener(view -> {
+                if (foodItemListAdapter.selectedIngredientList == null || foodItemListAdapter.selectedIngredientList.size() == 0) {
+                    Toast.makeText(getContext(), "Please select at least one ingredient!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("ingredientList", foodItemListAdapter.selectedIngredientList);
+                    bundle.putString("loadLocation", "homeFrag");
+                    if (callbackListener != null) {
+                        callbackListener.onCallback("recipe", bundle);
+                    }
+                }
+        });
 
         new RetrieveTask(this).execute();
         return rootView;
@@ -154,6 +199,12 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
         }
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (getActivity() instanceof fragmentCallbackListener)
+            callbackListener = (fragmentCallbackListener) getActivity();
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -181,7 +232,6 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
         foodItemListEmptyTextView.setVisibility(emptyMsgVisibility);
         foodItemListAdapter.notifyDataSetChanged();
     }
-
 
     @Override
     public void onFoodItemClick(int pos) {

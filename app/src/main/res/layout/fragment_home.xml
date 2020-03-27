@@ -5,6 +5,12 @@
     android:layout_height="match_parent"
     android:background="@color/light_shadow">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay" />
+
+
     <include layout="@layout/content_main" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -16,14 +22,39 @@
         app:srcCompat="@drawable/ic_add_white_24dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_generateRecipes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginBottom="75dp"
+        android:clickable="true"
+        app:layout_anchor="@id/fab"
+        app:layout_anchorGravity="top"
+        app:srcCompat="@drawable/ic_recipe_white_24dp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_cancelGeneration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="75dp"
+        android:visibility="invisible"
+        android:clickable="true"
+        app:layout_anchor="@id/fab"
+        app:layout_anchorGravity="top"
+        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_camera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="230dp"
+        android:layout_marginBottom="255dp"
         android:visibility="invisible"
         app:srcCompat="@drawable/ic_photo_camera_white_24dp" />
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_image"
@@ -31,7 +62,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="160dp"
+        android:layout_marginBottom="195dp"
         android:visibility="invisible"
         app:srcCompat="@drawable/ic_image_white_24dp" />
 
@@ -41,8 +72,17 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="90dp"
+        android:layout_marginBottom="135dp"
         android:visibility="invisible"
         app:srcCompat="@drawable/ic_create_white_24dp" />
+
+    <Button
+        android:id="@+id/genRecipesButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="12dp"
+        android:visibility="invisible"
+        android:text="Generate Recipes" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
