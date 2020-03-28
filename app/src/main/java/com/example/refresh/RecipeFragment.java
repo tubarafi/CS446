@@ -165,7 +165,7 @@ public class RecipeFragment extends Fragment implements RecipeItemListAdapter.On
                     fragmentReference.get().recipeItemListAdapter.notifyDataSetChanged();
                 }
             } catch (JSONException e) {
-                Log.d("fuck", e.getMessage());
+                Log.d("GetRecipesOnline Error", e.getMessage());
             }
         };
 
@@ -196,7 +196,7 @@ public class RecipeFragment extends Fragment implements RecipeItemListAdapter.On
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
             } catch (JSONException e) {
-                Log.d("fuck", e.getMessage());
+                Log.d("NavigateToRecipeURL Error", e.getMessage());
             }
         };
 

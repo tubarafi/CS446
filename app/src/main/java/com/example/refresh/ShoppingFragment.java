@@ -2,7 +2,6 @@ package com.example.refresh;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -47,6 +46,7 @@ public class ShoppingFragment extends Fragment implements ShopItemListAdapter.On
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.d("shopping", "oncreateview");
         View rootView = inflater.inflate(R.layout.fragment_shopping, container, false);
         ((AppCompatActivity) Objects.requireNonNull(getActivity())).getSupportActionBar().setTitle("Shopping List");
         db = AppDatabase.getAppDatabase(getContext());
@@ -81,6 +81,7 @@ public class ShoppingFragment extends Fragment implements ShopItemListAdapter.On
 
         @Override
         protected void onPostExecute(List<ShopItem> items) {
+            Log.d("shopping", "onpostexecute");
             if (items != null) {
                 if (items.size() > 0) {
                     c.get().shopItemList.clear();
@@ -98,6 +99,7 @@ public class ShoppingFragment extends Fragment implements ShopItemListAdapter.On
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("shopping", "onactivityresult");
         if (requestCode == 100 && resultCode > 0) {
             int pos = data.getIntExtra("position", -1);
             if (resultCode == 1) {
@@ -137,61 +139,45 @@ public class ShoppingFragment extends Fragment implements ShopItemListAdapter.On
         remindDateEditText.setInputType(InputType.TYPE_NULL);
 
         alertDialogBuilder.setPositiveButton("OK", null);
-        alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.dismiss();
-            }
-        });
+        alertDialogBuilder.setNegativeButton("Cancel", (dialog, id) -> dialog.dismiss());
 
         AlertDialog alertDialog = alertDialogBuilder.create();
 
 
-        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+        alertDialog.setOnShowListener(dialogInterface -> {
 
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
+            Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            button.setOnClickListener(view1 -> {
+                ShopItem item1 = shopItemList.get(position);
 
-                Button button = ((AlertDialog) alertDialog).getButton(AlertDialog.BUTTON_POSITIVE);
-                button.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View view) {
-                        ShopItem item1 = shopItemList.get(position);
-
-                        if (remindDateEditText.getText().toString().isEmpty()) {
-                            Toast.makeText(getContext(), "Please enter a date.", Toast.LENGTH_LONG).show();
-                        } else {
-                            FoodItem foodItem = new FoodItem(item1.getName(), remindDateEditText.getText().toString(), item1.getQuantity(), "");
-                            try {
-                                db.foodItemDAO().insert(foodItem);
-                                db.shopItemDAO().delete(item1);
-                                shopItemList.remove(position);
-                                shopItemListAdapter.notifyDataSetChanged();
-                                alertDialog.dismiss();
-                            } catch (Exception ex) {
-                                Log.e("Move Shop item failed", ex.getMessage() != null ? ex.getMessage() : "");
-                            }
-                        }
-
+                if (remindDateEditText.getText().toString().isEmpty()) {
+                    Toast.makeText(getContext(), "Please enter a date.", Toast.LENGTH_LONG).show();
+                } else {
+                    FoodItem foodItem = new FoodItem(item1.getName(), remindDateEditText.getText().toString(), item1.getQuantity(), "");
+                    try {
+                        db.foodItemDAO().insert(foodItem);
+                        db.shopItemDAO().delete(item1);
+                        shopItemList.remove(position);
+                        shopItemListAdapter.notifyDataSetChanged();
+                        alertDialog.dismiss();
+                    } catch (Exception ex) {
+                        Log.e("Move Shop item failed", ex.getMessage() != null ? ex.getMessage() : "");
                     }
-                });
-            }
+                }
+
+            });
         });
 
         alertDialog.show();
 
-        remindDateEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Calendar cldr = Calendar.getInstance();
-                int day = cldr.get(Calendar.DAY_OF_MONTH);
-                int month = cldr.get(Calendar.MONTH);
-                int year = cldr.get(Calendar.YEAR);
-                DatePickerDialog picker = new DatePickerDialog(getContext(), (view1, year1, monthOfYear, dayOfMonth) -> remindDateEditText.setText((monthOfYear + 1) + "/" + dayOfMonth + "/" + year1), year, month, day);
-                picker.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
-                picker.show();
-            }
+        remindDateEditText.setOnClickListener(v -> {
+            final Calendar cldr = Calendar.getInstance();
+            int day = cldr.get(Calendar.DAY_OF_MONTH);
+            int month = cldr.get(Calendar.MONTH);
+            int year = cldr.get(Calendar.YEAR);
+            DatePickerDialog picker = new DatePickerDialog(getContext(), (view1, year1, monthOfYear, dayOfMonth) -> remindDateEditText.setText((monthOfYear + 1) + "/" + dayOfMonth + "/" + year1), year, month, day);
+            picker.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+            picker.show();
         });
     }
 

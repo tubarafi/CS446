@@ -2,7 +2,6 @@ package com.example.refresh.adapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -53,6 +52,7 @@ public class ShopItemListAdapter extends RecyclerView.Adapter<ShopItemListAdapte
 
         holder.shopNameTextView.setText(shopItem.getName());
         holder.quantityTextView.setText(String.valueOf(shopItem.getQuantity()));
+        holder.msrpTextView.setText(String.valueOf(shopItem.getMsrp()));
 
         holder.crossButtonImageView.setOnClickListener(view -> {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
@@ -67,7 +67,8 @@ public class ShopItemListAdapter extends RecyclerView.Adapter<ShopItemListAdapte
         });
 
 
-        holder.editButtonImageView.setOnClickListener(view -> shoppingFragment.startActivityForResult(new Intent(context, AddShopItemActivity.class).putExtra("shop_item", shopItemList.get(itemPosition)).putExtra("position", itemPosition), 100));
+        holder.editButtonImageView.setOnClickListener(view ->
+                shoppingFragment.startActivityForResult(new Intent(context, AddShopItemActivity.class).putExtra("shop_item", shopItemList.get(itemPosition)).putExtra("position", itemPosition), 100));
 
 
     }
@@ -90,6 +91,7 @@ public class ShopItemListAdapter extends RecyclerView.Adapter<ShopItemListAdapte
     public class ListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView shopNameTextView;
         TextView quantityTextView;
+        TextView msrpTextView;
         ImageView crossButtonImageView;
         ImageView editButtonImageView;
         OnShopItemListener onShopItemListener;
@@ -100,6 +102,7 @@ public class ShopItemListAdapter extends RecyclerView.Adapter<ShopItemListAdapte
             itemView.setOnClickListener(this);
             shopNameTextView = itemView.findViewById(R.id.shopNameTextView);
             quantityTextView = itemView.findViewById(R.id.quantityTextView);
+            msrpTextView = itemView.findViewById(R.id.msrpTextView);
             crossButtonImageView = itemView.findViewById(R.id.crossImageView);
             editButtonImageView = itemView.findViewById(R.id.editImageView);
         }

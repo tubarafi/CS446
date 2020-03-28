@@ -34,10 +34,10 @@
             android:id="@+id/editImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
             android:alpha="0.5"
             android:contentDescription="@string/edit_button"
             android:src="@drawable/ic_edit_black_24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/crossImageView"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -48,6 +48,7 @@
             android:alpha="0.5"
             android:contentDescription="@string/delete_button"
             android:src="@drawable/ic_delete_black_24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -69,6 +70,30 @@
             app:layout_constraintLeft_toRightOf="@id/quantityTitle"
             app:layout_constraintTop_toBottomOf="@id/shopNameTextView"
             tools:text="5" />
+
+        <TextView
+            android:id="@+id/msrpTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="132dp"
+            android:text="MSRP:"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.512" />
+
+        <TextView
+            android:id="@+id/msrpTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/msrpTitle"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.512"
+            tools:text="$5.99" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

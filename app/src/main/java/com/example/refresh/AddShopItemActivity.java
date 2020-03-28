@@ -1,7 +1,5 @@
 package com.example.refresh;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,8 +8,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.refresh.database.AppDatabase;
 import com.example.refresh.database.model.ShopItem;
+import com.example.refresh.util.PriceUtil;
+
+import java.util.Objects;
+
 
 public class AddShopItemActivity extends AppCompatActivity {
 
@@ -41,7 +45,7 @@ public class AddShopItemActivity extends AppCompatActivity {
             nameEditText.setText(shopItem.getName());
             quantityEditText.setText(String.valueOf(shopItem.getQuantity()));
         } else {
-            getSupportActionBar().setTitle("Create Shop Item");
+            Objects.requireNonNull(getSupportActionBar()).setTitle("Create Shop Item");
         }
         createButton.setOnClickListener(view -> {
             Context context = getApplicationContext();
@@ -53,24 +57,37 @@ public class AddShopItemActivity extends AppCompatActivity {
                 Toast.makeText(context, "Please enter a quantity.", Toast.LENGTH_LONG).show();
             } else {
                 if (update) {
-                    shopItem.setName(nameEditText.getText().toString());
-                    shopItem.setQuantity(Integer.parseInt(quantityEditText.getText().toString()));
-                    try {
-                        db.shopItemDAO().update(shopItem);
-                        setResult(shopItem, 2); // update
-                        Toast.makeText(context, "Updated " + shopItem.getName() + ".", Toast.LENGTH_LONG).show();
-                    } catch (Exception ex) {
-                        Log.e("Update Shop failed", ex.getMessage() != null ? ex.getMessage() : "");
-                    }
+
+                    PriceUtil.getItemPrice(result -> {
+                        shopItem.setName(nameEditText.getText().toString());
+                        shopItem.setQuantity(Integer.parseInt(quantityEditText.getText().toString()));
+                        shopItem.setMsrp(result);
+
+                        try {
+                            db.shopItemDAO().update(shopItem);
+
+                            setResult(shopItem, 2); // update
+                            Toast.makeText(context, "Updated " + shopItem.getName() + ".", Toast.LENGTH_LONG).show();
+                        } catch (Exception ex) {
+                            Log.e("Update Shop failed", ex.getMessage() != null ? ex.getMessage() : "");
+                        }
+                    }, AddShopItemActivity.this, nameEditText.getText().toString(), quantityEditText.getText().toString());
+
                 } else {
-                    shopItem = new ShopItem(nameEditText.getText().toString(), Integer.parseInt(quantityEditText.getText().toString()));
-                    try {
-                        db.shopItemDAO().insert(shopItem);
-                        setResult(shopItem, 1); //create
-                        Toast.makeText(context, "Added " + shopItem.getName() + " to shopping list.", Toast.LENGTH_LONG).show();
-                    } catch (Exception ex) {
-                        Log.e("Add Shop failed", ex.getMessage() != null ? ex.getMessage() : "");
-                    }
+                    PriceUtil.getItemPrice(result -> {
+
+                        ShopItem newShopItem = new ShopItem(nameEditText.getText().toString(), Integer.parseInt(quantityEditText.getText().toString()), result);
+
+                        try {
+                            db.shopItemDAO().insert(newShopItem);
+                            setResult(newShopItem, 1); //create
+                            Toast.makeText(context, "Added " + newShopItem.getName() + " to shopping list.", Toast.LENGTH_LONG).show();
+                        } catch (Exception ex) {
+                            Log.e("Add Shop failed", ex.getMessage() != null ? ex.getMessage() : "");
+                        }
+
+
+                    }, AddShopItemActivity.this, nameEditText.getText().toString(), quantityEditText.getText().toString());
                 }
             }
         });
@@ -82,4 +99,5 @@ public class AddShopItemActivity extends AppCompatActivity {
         setResult(flag, new Intent().putExtra("shop_item", shop).putExtra("position", pos));
         finish();
     }
+
 }

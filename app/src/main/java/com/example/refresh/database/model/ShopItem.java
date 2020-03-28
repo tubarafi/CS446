@@ -19,9 +19,12 @@ public class ShopItem implements Serializable {
 
     private int quantity;
 
-    public ShopItem(@NonNull String name, int quantity) {
+    private String msrp;
+
+    public ShopItem(@NonNull String name, int quantity, String msrp) {
         this.name = name;
         this.quantity = quantity;
+        this.msrp = msrp;
     }
 
     public long getId() {
@@ -47,5 +50,13 @@ public class ShopItem implements Serializable {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public String getMsrp() {
+        return msrp;
+    }
+
+    public void setMsrp(String msrp) {
+        this.msrp = msrp;
     }
 }
