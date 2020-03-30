@@ -12,14 +12,12 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatImageView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,7 +43,7 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
     private AppDatabase db;
     private Boolean isFabOpen = false;
     private FloatingActionButton fab, cameraFab, imageFab, manualFab, recipeFab, cancelFab;
-    private Animation fab_open, fab_close, rotate_forward, rotate_backward;
+    private Animation add_option_fab_open, add_option_fab_close, rotate_forward, rotate_backward, show_fab, hide_fab;
     private Button genButton;
     private boolean showingCheckboxes;
     private fragmentCallbackListener callbackListener;
@@ -71,24 +69,26 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
         cancelFab = rootView.findViewById(R.id.fab_cancelGeneration);
         genButton = rootView.findViewById(R.id.genRecipesButton);
 
-        fab_open = AnimationUtils.loadAnimation(getContext(), R.anim.fab_open);
-        fab_close = AnimationUtils.loadAnimation(getContext(), R.anim.fab_close);
+        add_option_fab_open = AnimationUtils.loadAnimation(getContext(), R.anim.add_option_fab_open);
+        add_option_fab_close = AnimationUtils.loadAnimation(getContext(), R.anim.add_option_fab_close);
         rotate_forward = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_forward);
         rotate_backward = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_backward);
+        show_fab = AnimationUtils.loadAnimation(getContext(), R.anim.show_fab);
+        hide_fab = AnimationUtils.loadAnimation(getContext(), R.anim.hide_fab);
 
         manualFab.setOnClickListener(view -> {
-                    AnimateFab();
+            AnimateAddFab();
                     startActivityForResult(new Intent(getActivity(), AddFoodItemActivity.class), 100);
         });
         cameraFab.setOnClickListener(view -> {
             startActivityForResult(new Intent(getActivity(), ScannerActivity.class), 100);
-            AnimateFab();
+            AnimateAddFab();
         });
         imageFab.setOnClickListener(view -> {
             startActivityForResult(new Intent(getActivity(), GalleryActivity.class), 100);
-            AnimateFab();
+            AnimateAddFab();
         });
-        fab.setOnClickListener(view -> AnimateFab());
+        fab.setOnClickListener(view -> AnimateAddFab());
 
         recipeFab.setOnClickListener(view -> {
                 if (!showingCheckboxes) {
@@ -97,6 +97,7 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
                     showingCheckboxes = true;
                     recipeFab.hide();
                     cancelFab.show();
+                    fab.hide();
                 }
         });
 
@@ -107,7 +108,7 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
                     showingCheckboxes = false;
                     cancelFab.hide();
                     recipeFab.show();
-
+                    fab.show();
                 }
         });
 
@@ -129,7 +130,7 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.notification_settings, menu);
     }
 
@@ -144,24 +145,28 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
         return super.onOptionsItemSelected(item);
     }
 
-    private void AnimateFab() {
+    private void AnimateAddFab() {
         if (isFabOpen) {
             fab.startAnimation(rotate_backward);
-            cameraFab.startAnimation(fab_close);
-            imageFab.startAnimation(fab_close);
-            manualFab.startAnimation(fab_close);
+            cameraFab.startAnimation(add_option_fab_close);
+            imageFab.startAnimation(add_option_fab_close);
+            manualFab.startAnimation(add_option_fab_close);
+            recipeFab.startAnimation(show_fab);
             cameraFab.setClickable(false);
             imageFab.setClickable(false);
             manualFab.setClickable(false);
+            recipeFab.setClickable(true);
             isFabOpen = false;
         } else {
             fab.startAnimation(rotate_forward);
-            cameraFab.startAnimation(fab_open);
-            imageFab.startAnimation(fab_open);
-            manualFab.startAnimation(fab_open);
+            cameraFab.startAnimation(add_option_fab_open);
+            imageFab.startAnimation(add_option_fab_open);
+            manualFab.startAnimation(add_option_fab_open);
+            recipeFab.startAnimation(hide_fab);
             cameraFab.setClickable(true);
             imageFab.setClickable(true);
             manualFab.setClickable(true);
+            recipeFab.setClickable(false);
             isFabOpen = true;
         }
     }

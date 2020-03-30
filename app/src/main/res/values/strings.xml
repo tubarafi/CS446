@@ -21,8 +21,13 @@
     <string name="create_button">Create</string>
     <string name="cancel_button">Cancel</string>
     <string name="edit_button">Edit</string>
-    <string name="delete_button">Delete</string>
+    <string name="delete_button">Remove</string>
     <string name="item_quantity_label">Quantity: </string>
     <string name="item_reminder_label">Remind me on: </string>
     <string name="save_button">Save</string>
+    <string name="recipe_item_missing_ingredients_label">Missing ingredients:</string>
+    <string name="na_placeholder">N/A</string>
+    <string name="open_in_browser_label">Open in Browser</string>
+    <string name="shop_item_msrp_label">MSRP:</string>
+    <string name="generate_recipes_button">Generate Recipes</string>
 </resources>

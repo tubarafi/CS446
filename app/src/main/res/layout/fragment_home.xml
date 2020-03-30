@@ -26,10 +26,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|end"
-        android:layout_marginBottom="75dp"
+        android:layout_marginBottom="80dp"
         android:clickable="true"
         app:layout_anchor="@id/fab"
-        app:layout_anchorGravity="top"
         app:srcCompat="@drawable/ic_recipe_white_24dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -37,13 +36,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="75dp"
-        android:visibility="invisible"
+        android:layout_margin="@dimen/fab_margin"
         android:clickable="true"
-        app:layout_anchor="@id/fab"
-        app:layout_anchorGravity="top"
-        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+        android:visibility="invisible"
+        app:srcCompat="@drawable/ic_close_white_24dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_camera"
@@ -51,7 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="255dp"
+        android:layout_marginBottom="230dp"
         android:visibility="invisible"
         app:srcCompat="@drawable/ic_photo_camera_white_24dp" />
 
@@ -62,7 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="195dp"
+        android:layout_marginBottom="160dp"
         android:visibility="invisible"
         app:srcCompat="@drawable/ic_image_white_24dp" />
 
@@ -72,7 +68,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="135dp"
+        android:layout_marginBottom="90dp"
         android:visibility="invisible"
         app:srcCompat="@drawable/ic_create_white_24dp" />
 
@@ -82,7 +78,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center"
         android:layout_marginBottom="12dp"
-        android:visibility="invisible"
-        android:text="Generate Recipes" />
+        android:text="@string/generate_recipes_button"
+        android:visibility="invisible" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

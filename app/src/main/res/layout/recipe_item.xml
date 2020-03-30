@@ -17,7 +17,7 @@
             android:id="@+id/recipeImageView"
             android:layout_width="90dp"
             android:layout_height="91dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
             app:srcCompat="@drawable/ic_app_icon" />
         <LinearLayout
             android:layout_width="170dp"
@@ -29,63 +29,62 @@
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                tools:text="Apple Pie" />
+                tools:text="@string/na_placeholder" />
             <TextView
                 android:id="@+id/missingIngredientTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Missing ingredients: " />
+                android:layout_marginTop="4dp"
+                android:text="@string/recipe_item_missing_ingredients_label" />
             <TextView
                 android:id="@+id/missingIngredients"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintLeft_toRightOf="@id/missingIngredientTitle"
                 app:layout_constraintTop_toBottomOf="@id/recipeNameTextView"
-                tools:text="potatoes, potatoes, potatoes" />
+                tools:text="@string/na_placeholder" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_gravity="right|top"
-            android:layout_marginLeft="6dp">
+            android:layout_gravity="end|top"
+            android:layout_marginStart="6dp">
             <Button
                 android:id="@+id/openBrowserButton"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:padding="8dp"
                 android:layout_weight="1"
-                android:text="Open in Browser"
+                android:text="@string/open_in_browser_label"
                 android:textAllCaps="false"
-                android:textSize="10dp"
-                android:layout_gravity="right"
-                android:drawablePadding="-7sp"
-                android:drawableLeft="@android:drawable/ic_menu_set_as" />
+                android:textSize="12sp"
+                android:layout_gravity="end"
+                android:drawableStart="@drawable/ic_open_in_browser" />
 
             <Button
                 android:id="@+id/saveRecipeButton"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:padding="8dp"
                 android:layout_weight="1"
-                android:text="Save Recipe"
+                android:text="@string/save_button"
                 android:textAllCaps="false"
-                android:textSize="10dp"
-                android:layout_gravity="right"
-                android:drawablePadding="-7sp"
-                android:drawableLeft="@drawable/ic_add_white_24dp" />
+                android:textSize="12sp"
+                android:layout_gravity="end"
+                android:drawableStart="@drawable/ic_add_white_24dp" />
             <Button
                 android:id="@+id/deleteRecipeButton"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:padding="8dp"
                 android:layout_weight="1"
-                android:text="Remove"
+                android:text="@string/delete_button"
                 android:textAllCaps="false"
-                android:textSize="10dp"
-                android:layout_gravity="right"
-                android:drawablePadding="-7sp"
-                android:drawableLeft="@drawable/ic_delete_white_24dp" />
+                android:textSize="12sp"
+                android:layout_gravity="end"
+                android:drawableStart="@drawable/ic_delete_white_24dp"
+                tools:ignore="SmallSp" />
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

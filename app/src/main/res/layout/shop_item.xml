@@ -14,7 +14,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:background="@color/white"
@@ -28,7 +27,7 @@
             android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Apple" />
+            tools:text="@string/na_placeholder" />
 
         <ImageView
             android:id="@+id/editImageView"
@@ -76,7 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="132dp"
-            android:text="MSRP:"
+            android:text="@string/shop_item_msrp_label"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -93,7 +92,7 @@
             app:layout_constraintStart_toEndOf="@+id/msrpTitle"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.512"
-            tools:text="$5.99" />
+            tools:text="@string/na_placeholder" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
