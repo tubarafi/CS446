@@ -8,11 +8,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.text.InputType;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
+import androidx.preference.PreferenceManager;
 
 import com.example.refresh.database.AppDatabase;
 import com.example.refresh.database.model.FoodItem;
@@ -42,6 +42,7 @@ public class AddFoodItemActivity extends AppCompatActivity {
     private boolean update = false;
     private int pos;
 
+//    private SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +103,6 @@ public class AddFoodItemActivity extends AppCompatActivity {
                         db.foodItemDAO().update(foodItem);
                         setResult(foodItem, 2); // update
                         Toast.makeText(context, "Updated " + foodItem.getName() + ".", Toast.LENGTH_LONG).show();
-
                     } catch (Exception ex) {
                         Log.e("Update Food failed", ex.getMessage() != null ? ex.getMessage() : "");
                     }
@@ -113,11 +113,13 @@ public class AddFoodItemActivity extends AppCompatActivity {
                         setResult(foodItem, 1); //create
                         String name = foodItem.getName();
                         Toast.makeText(context, "Added " + foodItem.getName() + " to fridge.", Toast.LENGTH_LONG).show();
-
-                        scheduleNotification(context);
                     } catch (Exception ex) {
                         Log.e("Add Food failed", ex.getMessage() != null ? ex.getMessage() : "");
                     }
+                }
+                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+                if (sp.getBoolean("reminder", false)) {
+                    scheduleNotification(context, update);
                 }
             }
         });
@@ -130,7 +132,10 @@ public class AddFoodItemActivity extends AppCompatActivity {
         finish();
     }
 
-    private void scheduleNotification(Context context) {
+    private void scheduleNotification(Context context, Boolean isUpdate) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        String[] time = sp.getString("time", "").split(":");
+
         // Create notification channel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
@@ -162,6 +167,9 @@ public class AddFoodItemActivity extends AppCompatActivity {
         PendingIntent alarmIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, 0);
         // Schedule
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        if (isUpdate) { // delete old intent
+            alarmManager.cancel(alarmIntent);
+        }
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeZone(TimeZone.getTimeZone("EST"));
 
@@ -169,14 +177,10 @@ public class AddFoodItemActivity extends AppCompatActivity {
             Date expiryDate = new SimpleDateFormat("MM/dd/yyyy").parse(foodItem.getRemindMeOnDate());
             assert expiryDate != null;
             assert alarmManager != null;
-            if (DateUtils.isToday(expiryDate.getTime())) {
-                alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), alarmIntent);
-            } else {
-                calendar.setTime(expiryDate);
-                calendar.set(Calendar.HOUR_OF_DAY, 12);
-                calendar.set(Calendar.MINUTE, 40);
-                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
-            }
+            calendar.setTime(expiryDate);
+            calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time[0]));
+            calendar.set(Calendar.MINUTE, Integer.parseInt(time[1]));
+            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
         } catch (Exception ex) {
             Log.e("Date conversion for notification failed.", ex.getMessage() != null ? ex.getMessage() : "");
         }

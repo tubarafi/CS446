@@ -135,14 +135,14 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.notification_settings, menu);
+        inflater.inflate(R.menu.support_bar, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.notification_setting) {
-            startActivityForResult(new Intent(getActivity(), NotificationSettingsActivity.class), 100);
+            startActivityForResult(new Intent(getActivity(), SettingsActivity.class), 100);
             return true;
         }
 
@@ -248,7 +248,6 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
 
     @Override
     public void onFoodItemClick(int pos) {
-        //TODO: Display recipes based on selected food item.
     }
 }
 

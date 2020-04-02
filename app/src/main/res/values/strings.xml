@@ -3,15 +3,6 @@
     <string name="bottom_nav_fridge">Fridge</string>
     <string name="bottom_nav_recipe">Recipes</string>
     <string name="bottom_nav_shop">Shopping List</string>
-    <string name="settings">Notification Settings</string>
-    <string name="settings_reminder_time_label">Remind me at </string>
-    <string name="settings_reminder_frequency">Reminder Frequency</string>
-    <string name="settings_add_reminder">Add Reminder</string>
-    <string name="settings_reminder_hint">e.g. 10</string>
-    <string name="settings_reminder_minute_label">Minutes before</string>
-    <string name="settings_reminder_hour_label">Hours</string>
-    <string name="settings_reminder_day_label">Days</string>
-    <string name="settings_reminder_week_label">Weeks</string>
     <string name="null_list_screen">Start by adding a new item!</string>
     <string name="null_recipe_screen">Nothing to cook with :(</string>
     <string name="form_item_name_label">Item Name</string>
@@ -30,4 +21,16 @@
     <string name="open_in_browser_label">Open in Browser</string>
     <string name="shop_item_msrp_label">MSRP:</string>
     <string name="generate_recipes_button">Generate Recipes</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Preference Titles -->
+    <string name="notifications_header">Notifications</string>
+
+    <!-- Notification Preferences -->
+    <string name="reminder_title">Expiry Reminders</string>
+    <string name="reminder_summary_on">Receive notifications for expiring food items</string>
+    <string name="reminder_summary_off">Turn on to enable notifications for expiring food items</string>
+
+    <string name="time_title">Reminder Time</string>
+    <string name="time_hint">Enter the time of day at which reminders should be sent in 24-hour format.</string>
 </resources>
