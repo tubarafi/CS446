@@ -38,6 +38,8 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
 
     private List<FoodItem> foodItemList = new ArrayList<>();
     private TextView foodItemListEmptyTextView;
+    private TextView totalText;
+    private TextView totalCostText;
     private RecyclerView recyclerView;
     private FoodItemListAdapter foodItemListAdapter;
     private AppDatabase db;
@@ -56,6 +58,8 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
         this.setHasOptionsMenu(true);
         db = AppDatabase.getAppDatabase(getContext());
         foodItemListEmptyTextView = rootView.findViewById(R.id.emptyListTextView);
+        totalText = rootView.findViewById(R.id.totalText);
+        totalCostText = rootView.findViewById(R.id.totalCostText);
         recyclerView = rootView.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         foodItemListAdapter = new FoodItemListAdapter(getActivity(), foodItemList, this);
@@ -197,8 +201,12 @@ public class HomeFragment extends Fragment implements FoodItemListAdapter.OnFood
                     // hides empty text view
                     c.get().foodItemListEmptyTextView.setVisibility(View.GONE);
                     c.get().foodItemListAdapter.notifyDataSetChanged();
+                    c.get().totalText.setVisibility(View.GONE);
+                    c.get().totalCostText.setVisibility(View.GONE);
                 } else {
                     c.get().foodItemListEmptyTextView.setVisibility(View.VISIBLE);
+                    c.get().totalText.setVisibility(View.GONE);
+                    c.get().totalCostText.setVisibility(View.GONE);
                 }
             }
         }

@@ -39,6 +39,8 @@ public class ShoppingFragment extends Fragment implements ShopItemListAdapter.On
     private List<ShopItem> shopItemList = new ArrayList<>();
 
     private TextView shopItemListEmptyTextView;
+    private TextView totalText;
+    private TextView totalCostText;
     private RecyclerView recyclerView;
     private ShopItemListAdapter shopItemListAdapter;
     private AppDatabase db;
@@ -46,11 +48,12 @@ public class ShoppingFragment extends Fragment implements ShopItemListAdapter.On
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.d("shopping", "oncreateview");
         View rootView = inflater.inflate(R.layout.fragment_shopping, container, false);
         ((AppCompatActivity) Objects.requireNonNull(getActivity())).getSupportActionBar().setTitle("Shopping List");
         db = AppDatabase.getAppDatabase(getContext());
         shopItemListEmptyTextView = rootView.findViewById(R.id.emptyListTextView);
+        totalText = rootView.findViewById(R.id.totalText);
+        totalCostText = rootView.findViewById(R.id.totalCostText);
         recyclerView = rootView.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         shopItemListAdapter = new ShopItemListAdapter(getActivity(), shopItemList, this);
@@ -81,16 +84,19 @@ public class ShoppingFragment extends Fragment implements ShopItemListAdapter.On
 
         @Override
         protected void onPostExecute(List<ShopItem> items) {
-            Log.d("shopping", "onpostexecute");
             if (items != null) {
                 if (items.size() > 0) {
                     c.get().shopItemList.clear();
                     c.get().shopItemList.addAll(items);
                     // hides empty text view
                     c.get().shopItemListEmptyTextView.setVisibility(View.GONE);
+                    c.get().totalText.setVisibility(View.VISIBLE);
+                    c.get().totalCostText.setVisibility(View.VISIBLE);
                     c.get().shopItemListAdapter.notifyDataSetChanged();
                 } else {
                     c.get().shopItemListEmptyTextView.setVisibility(View.VISIBLE);
+                    c.get().totalText.setVisibility(View.GONE);
+                    c.get().totalCostText.setVisibility(View.GONE);
                 }
             }
         }
@@ -99,7 +105,6 @@ public class ShoppingFragment extends Fragment implements ShopItemListAdapter.On
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("shopping", "onactivityresult");
         if (requestCode == 100 && resultCode > 0) {
             int pos = data.getIntExtra("position", -1);
             if (resultCode == 1) {
@@ -115,11 +120,15 @@ public class ShoppingFragment extends Fragment implements ShopItemListAdapter.On
 
     public void listVisibility() {
         int emptyMsgVisibility = View.GONE;
+        int totalMsgVisibility = View.VISIBLE;
         if (shopItemList.size() == 0) { // no item to display
             if (shopItemListEmptyTextView.getVisibility() == View.GONE)
                 emptyMsgVisibility = View.VISIBLE;
+                totalMsgVisibility = View.GONE;
         }
         shopItemListEmptyTextView.setVisibility(emptyMsgVisibility);
+        totalText.setVisibility(totalMsgVisibility);
+        totalCostText.setVisibility(totalMsgVisibility);
         shopItemListAdapter.notifyDataSetChanged();
     }
 
@@ -179,6 +188,18 @@ public class ShoppingFragment extends Fragment implements ShopItemListAdapter.On
             picker.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
             picker.show();
         });
+    }
+
+    public void setTotalCost() {
+        float total = 0;
+
+        for (int i = 0; i < shopItemList.size(); i++) {
+            String msrp = shopItemList.get(i).getMsrp().replace("$", "");
+            float cost = Float.parseFloat(msrp);
+            total = total + cost;
+        }
+
+        totalCostText.setText(String.format("$%.2f", total));
     }
 
 
