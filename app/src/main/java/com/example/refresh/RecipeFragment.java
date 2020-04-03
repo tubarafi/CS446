@@ -37,6 +37,8 @@ public class RecipeFragment extends Fragment implements RecipeItemListAdapter.On
 
     private List<RecipeItem> recipeItemList = new ArrayList<>();
     private TextView recipeItemListEmptyTextView;
+    private TextView totalText;
+    private TextView totalCostText;
     private RecyclerView recyclerView;
     private RecipeItemListAdapter recipeItemListAdapter;
     private List<FoodItem> selectedIngredients;
@@ -52,6 +54,10 @@ public class RecipeFragment extends Fragment implements RecipeItemListAdapter.On
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Generated Recipes");
         db = AppDatabase.getAppDatabase(getContext());
         recipeItemListEmptyTextView = rootView.findViewById(R.id.emptyRecipeListTextView);
+        totalText = rootView.findViewById(R.id.totalText);
+        totalCostText = rootView.findViewById(R.id.totalCostText);
+        totalText.setVisibility(View.GONE);
+        totalCostText.setVisibility(View.GONE);
         recyclerView = rootView.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recipeItemListAdapter = new RecipeItemListAdapter(getActivity(), recipeItemList, this);
@@ -109,6 +115,8 @@ public class RecipeFragment extends Fragment implements RecipeItemListAdapter.On
                 recipeFragmentWeakReference.get().recipeItemListEmptyTextView.setVisibility(View.GONE);
                 recipeFragmentWeakReference.get().recipeItemListAdapter.notifyDataSetChanged();
             }
+            recipeFragmentWeakReference.get().totalText.setVisibility(View.GONE);
+            recipeFragmentWeakReference.get().totalCostText.setVisibility(View.GONE);
         }
     }
 

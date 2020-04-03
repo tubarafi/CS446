@@ -66,7 +66,6 @@ public class ShopItemListAdapter extends RecyclerView.Adapter<ShopItemListAdapte
             alertDialog.show();
         });
 
-
         holder.editButtonImageView.setOnClickListener(view ->
                 shoppingFragment.startActivityForResult(new Intent(context, AddShopItemActivity.class).putExtra("shop_item", shopItemList.get(itemPosition)).putExtra("position", itemPosition), 100));
 
