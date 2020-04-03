@@ -16,7 +16,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import com.example.refresh.database.AppDatabase;
@@ -27,8 +26,9 @@ import com.example.refresh.service.ImageLabelService;
 import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -47,7 +47,7 @@ public class GalleryActivity extends AppCompatActivity implements FirebaseProces
         setContentView(R.layout.activity_gallery);
 
         //Determine use cloud api or on device
-        imageLabelService = new FirebaseImageLabelService(false, this);
+        imageLabelService = new FirebaseImageLabelService(true, this);
         db = AppDatabase.getAppDatabase(GalleryActivity.this);
 
         if(allPermissionsGranted()){
@@ -67,9 +67,10 @@ public class GalleryActivity extends AppCompatActivity implements FirebaseProces
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(requestCode == REQUEST_GET_SINGLE_FILE && resultCode == Activity.RESULT_OK){
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_GET_SINGLE_FILE && resultCode == Activity.RESULT_OK) {
             Uri selectedImage = data.getData();
-            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
             Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
             cursor.moveToFirst();
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
@@ -110,7 +111,8 @@ public class GalleryActivity extends AppCompatActivity implements FirebaseProces
                 .collect(Collectors.groupingBy(FirebaseVisionImageLabel::getText, Collectors.reducing(0, e -> 1, Integer::sum)));
         List<FoodItem> foodItems = new ArrayList<>();
         for(Map.Entry mapElement : labelMap.entrySet()) {
-            foodItems.add(new FoodItem((String)mapElement.getKey(), LocalDateTime.now().plusDays(1).toString(), (int)mapElement.getValue(), ""));
+            foodItems.add(new FoodItem((String) mapElement.getKey(), (new SimpleDateFormat("M/d/yyyy")).format(Calendar.getInstance().getTime()), (int) mapElement.getValue(), ""));
+            break;
         }
         try {
             db.foodItemDAO().insertAll(foodItems);

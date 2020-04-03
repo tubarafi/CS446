@@ -10,7 +10,6 @@ import androidx.camera.core.Preview;
 import androidx.camera.core.PreviewConfig;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.LifecycleOwner;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -37,8 +36,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel;
 import java.io.File;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -62,7 +62,7 @@ public class ScannerActivity extends AppCompatActivity implements FirebaseProces
         db = AppDatabase.getAppDatabase(ScannerActivity.this);
 
         //Determine use cloud api or on device
-        imageLabelService = new FirebaseImageLabelService(false, this);
+        imageLabelService = new FirebaseImageLabelService(true, this);
 
         textureView = findViewById(R.id.view_finder);
 
@@ -133,7 +133,8 @@ public class ScannerActivity extends AppCompatActivity implements FirebaseProces
                 .collect(Collectors.groupingBy(FirebaseVisionImageLabel::getText, Collectors.reducing(0, e -> 1, Integer::sum)));
         List<FoodItem> foodItems = new ArrayList<>();
         for(Map.Entry mapElement : labelMap.entrySet()) {
-            foodItems.add(new FoodItem((String)mapElement.getKey(), LocalDateTime.now().plusDays(1).toString(), (int)mapElement.getValue(), ""));
+            foodItems.add(new FoodItem((String) mapElement.getKey(), (new SimpleDateFormat("M/d/yyyy")).format(Calendar.getInstance().getTime()), (int) mapElement.getValue(), ""));
+            break;
         }
         try {
             db.foodItemDAO().insertAll(foodItems);
